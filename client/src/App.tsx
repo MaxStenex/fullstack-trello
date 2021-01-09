@@ -1,8 +1,15 @@
-import React from "react";
-import "./helpers/normalize.css";
+import { Route, Switch } from "react-router-dom";
+import "./styles/normalize.css";
+import "./styles/global.css";
 
-const App: React.FC = () => {
-  return <h1>Hello, world!</h1>;
+import { Home } from "./pages";
+
+const App = () => {
+  return (
+    <Switch>
+      <Route exact path={["/home", "/"]} component={Home} />
+    </Switch>
+  );
 };
 
 export default App;

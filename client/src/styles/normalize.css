@@ -12,6 +12,9 @@ a:focus,
 a:active {
   outline: none;
 }
+input:focus {
+  outline: none;
+}
 nav,
 footer,
 header,

@@ -1,0 +1,8 @@
+@font-face {
+  font-family: "Charlie";
+  src: local("Charlie"), url(./fonts/Charlie.otf) format("otf");
+}
+
+body {
+  font-family: "Charlie", sans-serif;
+}
