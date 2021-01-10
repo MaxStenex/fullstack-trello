@@ -24,6 +24,9 @@ aside {
 button {
   cursor: pointer;
 }
+button:focus {
+  outline: none;
+}
 a,
 a:visited {
   text-decoration: none;
