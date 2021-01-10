@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import AboutImage from "../../images/about_photo.svg";
+import { Field, Form, Formik } from "formik";
 
 const About = () => {
   return (
@@ -15,10 +16,19 @@ const About = () => {
           </TextWrapper>
           <Image src={AboutImage} alt="#" />
         </Main>
-        <Form>
-          <EmailInput placeholder="Email" type="email" />
-          <SubmitButton type="submit">Sign Up - It`s Free</SubmitButton>
-        </Form>
+        <Formik
+          initialValues={{
+            email: "",
+          }}
+          onSubmit={(values: { email: string }) => {
+            console.log(values);
+          }}
+        >
+          <StyledForm>
+            <EmailInput placeholder="Email" type="email" name="email" />
+            <SubmitButton type="submit">Sign Up - It`s Free</SubmitButton>
+          </StyledForm>
+        </Formik>
       </Container>
     </Wrapper>
   );
@@ -32,37 +42,68 @@ const Container = styled.div`
   padding: 112px 15px 50px 10px;
   max-width: 1140px;
   margin: 0 auto;
+  @media (max-width: 1200px) {
+    max-width: 960px;
+  }
 `;
 const Main = styled.div`
   display: flex;
   align-items: center;
+  @media (max-width: 980px) {
+    flex-direction: column;
+    max-width: 100%;
+  }
 `;
 const TextWrapper = styled.div`
   padding-right: 20px;
+  @media (max-width: 980px) {
+    text-align: center;
+    padding: 0px 10px;
+  }
 `;
 const Title = styled.h2`
   font-size: 44px;
   font-weight: 600;
   color: #fff;
   margin-bottom: 20px;
+  @media (max-width: 500px) {
+    font-size: 37px;
+  }
 `;
 const Text = styled.p`
   font-size: 25px;
   color: #fff;
   letter-spacing: 1.2px;
+  @media (max-width: 500px) {
+    font-size: 22px;
+  }
 `;
-const Image = styled.img``;
-const Form = styled.form`
+const Image = styled.img`
+  @media (max-width: 1200px) {
+    max-width: 450px;
+  }
+  @media (max-width: 980px) {
+    max-width: 100%;
+  }
+`;
+const StyledForm = styled(Form)`
   margin-top: 50px;
   display: flex;
+  @media (max-width: 500px) {
+    justify-content: center;
+  }
 `;
-const EmailInput = styled.input`
+const EmailInput = styled(Field)`
   padding: 5px 5px 5px 15px;
   border-radius: 5px;
   line-height: 2;
   font-size: 20px;
   width: 370px;
   margin-right: 10px;
+  min-width: 100px;
+  @media (max-width: 500px) {
+    display: none;
+  }
 `;
 const SubmitButton = styled.button`
   color: #fff;
@@ -78,6 +119,10 @@ const SubmitButton = styled.button`
     background-color: #50a73f;
     border-color: #4b9e3b;
     transition: 0.2s;
+  }
+  @media (max-width: 500px) {
+    height: 50px;
+    max-width: 90%;
   }
 `;
 

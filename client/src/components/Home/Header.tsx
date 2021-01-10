@@ -19,7 +19,7 @@ const Header = () => {
 };
 
 const Wrapper = styled.header`
-  background-color: transparent;
+  background: linear-gradient(135deg, #0079bf, #5067c5);
   position: fixed;
   top: 0;
   right: 0;
@@ -45,20 +45,21 @@ const LoginLink = styled(Link)`
   color: #fff;
   line-height: 1.5;
   padding: 4px 8px;
-  font-size: 18px;
+  font-size: 17px;
   margin-right: 8px;
   &:hover {
     text-decoration: underline;
   }
 `;
 const SignupLink = styled(Link)`
-  padding: 5px 9px;
+  padding: 5px 8px;
   color: #0279bf;
   background-color: #fff;
   border-radius: 5px;
   font-weight: 600;
-  font-size: 18px;
+  font-size: 17px;
   line-height: 1.5;
+  text-align: center;
 `;
 
 export default Header;
