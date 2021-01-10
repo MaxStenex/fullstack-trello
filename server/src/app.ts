@@ -1,14 +1,16 @@
 import "reflect-metadata";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
-import schema from "./graphql/schema";
 import { createConnection } from "typeorm";
+import schema from "./graphql";
 
 const main = async () => {
   await createConnection();
 
   const app = express();
-  const server = new ApolloServer({ schema });
+  const server = new ApolloServer({
+    schema,
+  });
 
   server.applyMiddleware({ app });
 
