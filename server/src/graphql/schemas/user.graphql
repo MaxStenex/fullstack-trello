@@ -10,3 +10,8 @@ type User {
   email: String!
   createdAt: String!
 }
+
+type UserResponse {
+  user: User
+  errors: [String!]
+}

@@ -1,10 +1,10 @@
 # import RegisterUserInput from './user.graphql'
-# import User from './user.graphql'
+# import UserResponse from './user.graphql'
 
 type Query {
   hello: String
 }
 
 type Mutation {
-  createUser(input: RegisterUserInput!): User!
+  register(input: RegisterUserInput!): UserResponse!
 }
