@@ -8,5 +8,5 @@
   "database": "trello_clone",
   "synchronize": true,
   "logging": true,
-  "entities": ["src/entity/*.*"]
+  "entities": ["src/entities/*.*"]
 }

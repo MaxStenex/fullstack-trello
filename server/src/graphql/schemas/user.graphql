@@ -1,0 +1,12 @@
+input RegisterUserInput {
+  fullname: String!
+  email: String!
+  password: String!
+}
+
+type User {
+  id: Int!
+  fullname: String!
+  email: String!
+  createdAt: String!
+}
