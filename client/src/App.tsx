@@ -3,12 +3,13 @@ import "./styles/global.css";
 
 import { Route, Switch } from "react-router-dom";
 
-import { Signup, Home } from "./pages";
+import { Login, Signup, Home } from "./pages";
 
 const App = () => {
   return (
     <Switch>
       <Route exact path={["/home", "/"]} component={Home} />
+      <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
     </Switch>
   );

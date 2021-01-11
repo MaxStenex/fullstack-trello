@@ -1,20 +1,15 @@
 import { MutationRegisterArgs, UserResponse } from "../../types/generated";
-import { User } from "../../entities/User";
-import argon2 from "argon2";
 import { validateOrReject } from "class-validator";
+import UserService from "../../services/UserService";
 
 const register = async (
   _: any,
   { input: { fullname, password, email } }: MutationRegisterArgs
 ): Promise<UserResponse> => {
   try {
-    const hashedPassword = await argon2.hash(password);
-    const user = new User();
-    user.fullname = fullname;
-    user.password = hashedPassword;
-    user.email = email;
+    const user = await UserService.createUser(fullname, password, email);
 
-    const errors = await validateOrReject(user);
+    await validateOrReject(Object.assign(user, { password }));
 
     await user.save();
     return { user };

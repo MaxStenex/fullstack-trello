@@ -1,8 +1,11 @@
 import styled from "styled-components";
 import AboutImage from "../../images/about_photo.svg";
 import { Field, Form, Formik } from "formik";
+import { useHistory } from "react-router-dom";
 
 const About = () => {
+  const history = useHistory();
+
   return (
     <Wrapper>
       <Container>
@@ -20,8 +23,12 @@ const About = () => {
           initialValues={{
             email: "",
           }}
-          onSubmit={(values: { email: string }) => {
-            console.log(values);
+          onSubmit={({ email }: { email: string }) => {
+            if (email.trim() === "") {
+              history.push("/signup");
+            } else {
+              history.push(`/signup?email=${email}`);
+            }
           }}
         >
           <StyledForm>

@@ -1,33 +1,25 @@
 import styled from "styled-components";
 import { Field, Form, Formik } from "formik";
 import { Link } from "react-router-dom";
-import queryString from "query-string";
 
 const Main = () => {
-  const parsedQueryString = queryString.parse(window.location.search);
-
   return (
     <Wrapper>
       <MainContent>
-        <Title>Sign up for your account</Title>
+        <Title>Log in to Trello</Title>
         <Formik
-          initialValues={{
-            email: parsedQueryString.email || "",
-            fullname: "",
-            password: "",
-          }}
+          initialValues={{ email: "", password: "" }}
           onSubmit={(values) => {
             console.log(values);
           }}
         >
           <StyledForm>
             <Field type="email" placeholder="Email" name="email" />
-            <Field type="text" placeholder="Fullname" name="fullname" />
             <Field type="password" placeholder="Password" name="password" />
-            <Submit type="submit">Sign up</Submit>
+            <Submit type="submit">Log In</Submit>
           </StyledForm>
         </Formik>
-        <LoginLink to="/login">Already have an account? Log In</LoginLink>
+        <LoginLink to="/signup">Sign up for an account</LoginLink>
       </MainContent>
     </Wrapper>
   );
