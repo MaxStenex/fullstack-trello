@@ -1,6 +1,13 @@
-import { MutationRegisterArgs, UserResponse } from "../../types/generated";
+import {
+  MutationRegisterArgs,
+  UserResponse,
+  MutationLoginArgs,
+} from "../../types/generated";
 import { validateOrReject } from "class-validator";
 import UserService from "../../services/UserService";
+import AuthService from "../../services/AuthService";
+
+import { MyContext } from "../../types/MyContext";
 
 const register = async (
   _: any,
@@ -9,7 +16,7 @@ const register = async (
   try {
     const user = await UserService.createUser(fullname, password, email);
 
-    await validateOrReject(Object.assign(user, { password }));
+    await validateOrReject({ ...user, password });
 
     await user.save();
     return { user };
@@ -33,4 +40,20 @@ const register = async (
   }
 };
 
-export default { register };
+const login = async (
+  _: any,
+  { email, password }: MutationLoginArgs,
+  { res }: MyContext
+): Promise<UserResponse> => {
+  try {
+    const user = await UserService.loginUser(email, password);
+    const token = AuthService.createAccessToken(user);
+
+    AuthService.sendAccessToken(res, token);
+    return { user };
+  } catch (error) {
+    return { errors: [error.message] };
+  }
+};
+
+export default { register, login };

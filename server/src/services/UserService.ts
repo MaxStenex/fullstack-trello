@@ -16,6 +16,20 @@ class UserService {
 
     return user;
   };
+
+  loginUser = async (email: string, password: string): Promise<User> => {
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const isValidPassword = await argon2.verify(user.password, password);
+    if (!isValidPassword) {
+      throw new Error("Incorrect password");
+    }
+
+    return user;
+  };
 }
 
 export default new UserService();

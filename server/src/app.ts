@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import "dotenv";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { createConnection } from "typeorm";
@@ -16,6 +17,7 @@ const main = async () => {
         "request.credentials": "include",
       },
     },
+    context: ({ req, res }) => ({ req, res }),
   });
 
   server.applyMiddleware({ app });
