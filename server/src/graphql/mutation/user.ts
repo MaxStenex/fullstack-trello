@@ -47,9 +47,12 @@ const login = async (
 ): Promise<UserResponse> => {
   try {
     const user = await UserService.loginUser(email, password);
-    const token = AuthService.createAccessToken(user);
 
-    AuthService.sendAccessToken(res, token);
+    const accessToken = AuthService.createAccessToken(user);
+    const refreshToken = AuthService.createRefreshToken(user);
+
+    AuthService.sendAccessToken(res, accessToken);
+    AuthService.sendRefreshToken(res, refreshToken);
     return { user };
   } catch (error) {
     return { errors: [error.message] };
