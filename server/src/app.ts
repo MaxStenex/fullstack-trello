@@ -4,7 +4,6 @@ import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { createConnection } from "typeorm";
 import schema from "./graphql";
-import AuthService from "./services/AuthService";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
@@ -15,8 +14,6 @@ const main = async () => {
 
   app.use(cookieParser());
   app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
-
-  app.post("/refresh_tokens", AuthService.refreshTokens);
 
   const server = new ApolloServer({
     schema,

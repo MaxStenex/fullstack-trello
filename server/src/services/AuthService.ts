@@ -57,20 +57,18 @@ class AuthService {
   };
 
   isAuth = (context: MyContext): void => {
-    const authorizationHeaders = context.req.headers["authorization"];
-    if (!authorizationHeaders) {
+    const accessToken = context.req.cookies.at;
+    if (!accessToken) {
       throw new Error("User not authenticated");
     }
     try {
-      const token = authorizationHeaders.split(" ")[1];
-      const payload = verify(token, process.env.ACCESS_TOKEN_SECRET!) as any;
-
+      const payload = verify(accessToken, process.env.ACCESS_TOKEN_SECRET!) as any;
       if (!payload.userId) {
         throw new Error("User not authenticated");
       }
       context.payload = payload;
     } catch (error) {
-      throw new Error("User not authenticated");
+      this.refreshTokens(context.req, context.res);
     }
   };
 }
