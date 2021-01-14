@@ -2,9 +2,25 @@ import styled from "styled-components";
 import { Field, Form, Formik } from "formik";
 import { Link } from "react-router-dom";
 import queryString from "query-string";
+import { useMutation } from "@apollo/client";
+import { REGISTER_MUTATION } from "../../graphql/mutation/register";
+import {
+  RegisterMutationResponseType,
+  RegisterMutationVarsType,
+} from "../../types/graphql";
+
+type FormValuesType = {
+  email: string;
+  fullname: string;
+  password: string;
+};
 
 const Main = () => {
   const parsedQueryString = queryString.parse(window.location.search);
+  const [registerUser, { data, loading }] = useMutation<
+    RegisterMutationResponseType,
+    RegisterMutationVarsType
+  >(REGISTER_MUTATION);
 
   return (
     <Wrapper>
@@ -12,19 +28,38 @@ const Main = () => {
         <Title>Sign up for your account</Title>
         <Formik
           initialValues={{
-            email: parsedQueryString.email || "",
+            email: (parsedQueryString.email as string) || "",
             fullname: "",
             password: "",
           }}
-          onSubmit={(values) => {
-            console.log(values);
+          onSubmit={async (
+            { email, password, fullname }: FormValuesType,
+            { resetForm }
+          ) => {
+            const { data } = await registerUser({
+              variables: { email, password, fullname },
+            });
+            if (data?.register.user) {
+              resetForm();
+            }
           }}
         >
           <StyledForm>
             <Field type="email" placeholder="Email" name="email" />
             <Field type="text" placeholder="Fullname" name="fullname" />
             <Field type="password" placeholder="Password" name="password" />
-            <Submit type="submit">Sign up</Submit>
+            <>
+              {data?.register.errors &&
+                data.register.errors.map((error: string) => (
+                  <ErrorText key={error}>{error}</ErrorText>
+                ))}
+            </>
+            <>
+              {data?.register.user && <SuccessText>Successfully registered</SuccessText>}
+            </>
+            <Submit isLoading={loading} disabled={loading} type="submit">
+              {loading ? "Loading..." : "Sign up"}
+            </Submit>
           </StyledForm>
         </Formik>
         <LoginLink to="/login">Already have an account? Log In</LoginLink>
@@ -71,17 +106,19 @@ const StyledForm = styled(Form)`
     }
   }
 `;
-const Submit = styled.button`
-  background-color: #5aac44;
-  color: #fff;
+const Submit = styled.button<{ isLoading: boolean }>`
+  background-color: ${(props) => (props.isLoading ? "#ccc" : "#5aac44")};
+  color: ${(props) => (props.isLoading ? "#000" : "#fff")};
   font-weight: 600;
   padding: 8px;
   font-size: 18px;
   border-radius: 5px;
-  &:hover,
-  &:focus {
-    transition: 0.2s;
-    background-color: #72db54;
+  &:not([disabled]) {
+    &:hover,
+    &:focus {
+      transition: 0.2s;
+      background-color: #72db54;
+    }
   }
 `;
 const LoginLink = styled(Link)`
@@ -106,6 +143,16 @@ const LoginLink = styled(Link)`
     right: 0;
     background-color: #ccc;
   }
+`;
+const ErrorText = styled.span`
+  display: block;
+  color: red;
+  margin-bottom: 10px;
+`;
+const SuccessText = styled.span`
+  display: block;
+  color: green;
+  margin-bottom: 10px;
 `;
 
 export default Main;
