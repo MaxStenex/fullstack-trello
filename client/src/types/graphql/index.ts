@@ -17,3 +17,15 @@ export type RegisterMutationResponseType = {
     errors: [string] | null;
   };
 };
+
+export type LoginMutationVarsType = {
+  email: string;
+  password: string;
+};
+
+export type LoginMutationResponseType = {
+  login: {
+    user: UserType | null;
+    errors: [string] | null;
+  };
+};

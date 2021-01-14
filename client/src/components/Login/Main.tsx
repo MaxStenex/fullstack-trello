@@ -1,22 +1,46 @@
 import styled from "styled-components";
 import { Field, Form, Formik } from "formik";
 import { Link } from "react-router-dom";
+import { useMutation } from "@apollo/client";
+import { LOGIN_MUTATION } from "../../graphql/mutation/login";
+import { LoginMutationResponseType, LoginMutationVarsType } from "../../types/graphql";
+
+type FormValuesType = {
+  email: string;
+  password: string;
+};
 
 const Main = () => {
+  const [loginUser, { data, loading }] = useMutation<
+    LoginMutationResponseType,
+    LoginMutationVarsType
+  >(LOGIN_MUTATION);
+
   return (
     <Wrapper>
       <MainContent>
         <Title>Log in to Trello</Title>
         <Formik
           initialValues={{ email: "", password: "" }}
-          onSubmit={(values) => {
-            console.log(values);
+          onSubmit={async ({ password, email }: FormValuesType, { resetForm }) => {
+            const { data } = await loginUser({ variables: { email, password } });
+            if (data?.login.user) {
+              resetForm();
+            }
           }}
         >
           <StyledForm>
             <Field type="email" placeholder="Email" name="email" />
             <Field type="password" placeholder="Password" name="password" />
-            <Submit type="submit">Log In</Submit>
+            <>
+              {data?.login.errors &&
+                data.login.errors.map((error: string) => (
+                  <ErrorText key={error}>{error}</ErrorText>
+                ))}
+            </>
+            <Submit isLoading={loading} disabled={loading} type="submit">
+              Log In
+            </Submit>
           </StyledForm>
         </Formik>
         <LoginLink to="/signup">Sign up for an account</LoginLink>
@@ -63,17 +87,19 @@ const StyledForm = styled(Form)`
     }
   }
 `;
-const Submit = styled.button`
-  background-color: #5aac44;
-  color: #fff;
+const Submit = styled.button<{ isLoading: boolean }>`
+  background-color: ${(props) => (props.isLoading ? "#ccc" : "#5aac44")};
+  color: ${(props) => (props.isLoading ? "#000" : "#fff")};
   font-weight: 600;
   padding: 8px;
   font-size: 18px;
   border-radius: 5px;
-  &:hover,
-  &:focus {
-    transition: 0.2s;
-    background-color: #72db54;
+  &:not([disabled]) {
+    &:hover,
+    &:focus {
+      transition: 0.2s;
+      background-color: #72db54;
+    }
   }
 `;
 const LoginLink = styled(Link)`
@@ -98,6 +124,11 @@ const LoginLink = styled(Link)`
     right: 0;
     background-color: #ccc;
   }
+`;
+const ErrorText = styled.span`
+  display: block;
+  color: red;
+  margin-bottom: 10px;
 `;
 
 export default Main;
