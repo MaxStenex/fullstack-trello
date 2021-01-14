@@ -17,7 +17,7 @@ class AuthService {
   };
 
   createRefreshToken = (user: User) => {
-    return sign({ userId: user.id }, process.env.ACCESS_TOKEN_SECRET!, {
+    return sign({ userId: user.id }, process.env.REFRESH_TOKEN_SECRET!, {
       expiresIn: "7d",
     });
   };
@@ -38,12 +38,12 @@ class AuthService {
 
     let payload = null;
     try {
-      payload = verify(refreshToken, process.env.ACCESS_TOKEN_SECRET!) as any;
+      payload = verify(refreshToken, process.env.REFRESH_TOKEN_SECRET!) as any;
     } catch {
       return invalidTokenResponse();
     }
 
-    const user = await User.findOne({ id: res.locals.userId });
+    const user = await User.findOne({ id: payload.userId });
     if (!user) {
       return res.status(403).send("User not found");
     }

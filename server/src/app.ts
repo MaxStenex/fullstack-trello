@@ -6,12 +6,16 @@ import { createConnection } from "typeorm";
 import schema from "./graphql";
 import AuthService from "./services/AuthService";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 const main = async () => {
   await createConnection();
 
   const app = express();
+
   app.use(cookieParser());
+  app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+
   app.post("/refresh_tokens", AuthService.refreshTokens);
 
   const server = new ApolloServer({
@@ -24,7 +28,7 @@ const main = async () => {
     context: ({ req, res }) => ({ req, res }),
   });
 
-  server.applyMiddleware({ app });
+  server.applyMiddleware({ app, cors: false });
 
   app.listen(4000, () => console.log("🚀 Server ready at http://localhost:4000/graphql"));
 };
