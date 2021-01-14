@@ -14,20 +14,28 @@ const register = async (
   { input: { fullname, password, email } }: MutationRegisterArgs
 ): Promise<UserResponse> => {
   try {
+    if (password.length < 5) {
+      throw new Error("Password length should be greater then 5");
+    }
+    if (password.length > 255) {
+      throw new Error("Password length should be smaller then 255");
+    }
+
     const user = await UserService.createUser(fullname, password, email);
 
-    await validateOrReject({ ...user, password });
+    await validateOrReject(user);
 
     await user.save();
     return { user };
-  } catch (error) {
-    if (error.code === "23505") {
+  } catch (errors) {
+    if (errors.code === "23505") {
       return { errors: ["User email should be unique"] };
     }
+
     // if validation failed
-    if (error.length > 0) {
+    if (errors.length > 0) {
       const errorMessages: Array<string> = [];
-      error.map((err: any) => {
+      errors.map((err: any) => {
         const messages: Array<string> = Object.values(err.constraints);
         errorMessages.push(...messages);
       });
@@ -36,7 +44,7 @@ const register = async (
       };
     }
     // unexpected error
-    return { errors: ["Something goes wrong"] };
+    return { errors: [errors.message] };
   }
 };
 
