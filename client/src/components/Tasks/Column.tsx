@@ -1,28 +1,50 @@
 import styled from "styled-components";
 import EditSvg from "../../images/edit.svg";
+import React from "react";
+import { Droppable, Draggable } from "react-beautiful-dnd";
 
-const Column = () => {
+type TaskType = {
+  id: string;
+  text: string;
+};
+
+type PropsType = {
+  id: string;
+  title: string;
+  tasks: TaskType[];
+};
+
+const Column: React.FC<PropsType> = ({ title, id, tasks }) => {
   return (
-    <Container className="container">
-      <Header className="header">
-        <Title className="title">Today Todo</Title>
-        <FunctionsButton className="functions-button" />
+    <Container>
+      <Header>
+        <Title>{title}</Title>
+        <FunctionsButton />
       </Header>
-      <Tasks className="tasks">
-        <Task className="task">
-          <TaskText>Todo</TaskText>
-          <TaskButton>
-            <TaskButtonImage src={EditSvg} />
-          </TaskButton>
-        </Task>
-        <Task className="task">
-          <TaskText>Todo</TaskText>
-          <TaskButton>
-            <TaskButtonImage src={EditSvg} />
-          </TaskButton>
-        </Task>
-      </Tasks>
-      <AddButton className="add">
+      <Droppable droppableId={id}>
+        {(provided) => (
+          <Tasks {...provided.droppableProps} ref={provided.innerRef}>
+            {tasks.map((task: TaskType, index) => (
+              <Draggable key={task.id} draggableId={task.id} index={index}>
+                {(provided) => (
+                  <Task
+                    {...provided.draggableProps}
+                    ref={provided.innerRef}
+                    {...provided.dragHandleProps}
+                  >
+                    <TaskText>{task.text}</TaskText>
+                    <TaskButton>
+                      <TaskButtonImage src={EditSvg} />
+                    </TaskButton>
+                  </Task>
+                )}
+              </Draggable>
+            ))}
+            {provided.placeholder}
+          </Tasks>
+        )}
+      </Droppable>
+      <AddButton>
         <AddButtonText>+ Add another card</AddButtonText>
       </AddButton>
     </Container>
@@ -35,7 +57,7 @@ const Container = styled.div`
   background-color: #ebecf0;
   padding: 8px;
   font-size: 15px;
-  margin: 20px;
+  margin: 20px 0px 20px 20px;
 `;
 const Header = styled.div`
   display: flex;
@@ -83,6 +105,8 @@ const Task = styled.li`
   padding: 5px;
   display: flex;
   justify-content: space-between;
+  cursor: pointer !important;
+  user-select: none;
   &:hover {
     background-color: #dddfe4;
   }

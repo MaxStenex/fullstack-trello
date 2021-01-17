@@ -1,3 +1,4 @@
 import Column from "./Column";
+import Main from "./Main";
 
-export { Column };
+export { Main, Column };

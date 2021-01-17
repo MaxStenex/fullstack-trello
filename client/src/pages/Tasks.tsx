@@ -1,9 +1,9 @@
-import { Column } from "../components/Tasks";
+import { Main } from "../components/Tasks";
 
 const Tasks = () => {
   return (
     <>
-      <Column />
+      <Main />
     </>
   );
 };
