@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import EditSvg from "../../images/edit.svg";
-import React from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { Droppable, Draggable } from "react-beautiful-dnd";
+import AddTaskButton from "./AddTaskButton";
 
 type TaskType = {
   id: string;
@@ -10,18 +11,39 @@ type TaskType = {
 
 type PropsType = {
   id: string;
-  title: string;
+  titleText: string;
   tasks: TaskType[];
   index: number;
 };
 
-const Column: React.FC<PropsType> = ({ title, id, tasks, index }) => {
+const Column: React.FC<PropsType> = ({ titleText, id, tasks, index }) => {
+  const [title, setTitle] = useState(titleText);
+  const titleInputRef = useRef<HTMLInputElement | null>(null);
+
+  const closeForm = useCallback((evt: React.KeyboardEvent<HTMLInputElement>) => {
+    if (titleInputRef.current && evt.key === "Enter") {
+      titleInputRef.current.blur();
+    }
+  }, []);
+
   return (
     <Draggable draggableId={id} index={index}>
       {(provided) => (
-        <Container {...provided.draggableProps} ref={provided.innerRef}>
-          <Header {...provided.dragHandleProps}>
-            <Title>{title}</Title>
+        <Container
+          {...provided.dragHandleProps}
+          {...provided.draggableProps}
+          ref={provided.innerRef}
+        >
+          <Header>
+            <Title
+              type="text"
+              value={title}
+              onChange={(evt: React.ChangeEvent<HTMLInputElement>) =>
+                setTitle(evt.currentTarget.value)
+              }
+              onKeyPress={closeForm}
+              ref={titleInputRef}
+            />
             <FunctionsButton />
           </Header>
           <Droppable droppableId={id} type="task">
@@ -48,9 +70,7 @@ const Column: React.FC<PropsType> = ({ title, id, tasks, index }) => {
               </Tasks>
             )}
           </Droppable>
-          <AddButton>
-            <AddButtonText>+ Add another card</AddButtonText>
-          </AddButton>
+          <AddTaskButton />
         </Container>
       )}
     </Draggable>
@@ -61,25 +81,33 @@ const Container = styled.div`
   width: 272px;
   border-radius: 5px;
   background-color: #ebecf0;
-  padding: 8px;
+  padding: 0px 8px 8px 8px;
   font-size: 15px;
   margin: 20px 0px 20px 20px;
 `;
 const Header = styled.div`
+  padding-top: 15px;
   display: flex;
   justify-content: space-between;
   margin-bottom: 8px;
   cursor: pointer !important;
 `;
-const Title = styled.h3`
+const Title = styled.input`
   font-weight: 600;
   color: #172b4d;
   font-size: 18px;
   padding: 3px;
   flex: 1;
+  min-width: 50px;
   word-break: break-word;
   display: flex;
   align-items: center;
+  background-color: transparent;
+  border: 2px solid transparent;
+  border-radius: 3px;
+  &:focus {
+    border: 2px solid #377adf;
+  }
 `;
 const FunctionsButton = styled.button`
   display: flex;
@@ -96,7 +124,8 @@ const FunctionsButton = styled.button`
     top: 0px;
     font-size: 20px;
   }
-  &:hover {
+  &:hover,
+  &:focus {
     transition: 0.15s;
     background-color: rgba(9, 30, 66, 0.08);
   }
@@ -114,7 +143,8 @@ const Task = styled.li<{ isDragging: boolean }>`
   justify-content: space-between;
   cursor: pointer !important;
   user-select: none;
-  &:hover {
+  &:hover,
+  &:focus {
     background-color: #dddfe4;
   }
 `;
@@ -132,27 +162,14 @@ const TaskButton = styled.button`
   background-color: transparent;
   padding: 5px;
   border-radius: 3px;
-  &:hover {
+  &:hover,
+  &:focus {
     background-color: #bdc1cc;
   }
 `;
 const TaskButtonImage = styled.img`
   width: 100%;
   height: 100%;
-`;
-const AddButton = styled.button`
-  background-color: transparent;
-  padding: 6px 10px;
-  border-radius: 4px;
-  display: flex;
-  justify-content: flex-start;
-  width: 100%;
-  &:hover {
-    background: #dddfe4;
-  }
-`;
-const AddButtonText = styled.span`
-  font-size: 15px;
 `;
 
 export default Column;

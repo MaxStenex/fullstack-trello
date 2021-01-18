@@ -1,4 +1,5 @@
 import Column from "./Column";
 import Main from "./Main";
+import AddTaskButton from "./AddTaskButton";
 
-export { Main, Column };
+export { AddTaskButton, Main, Column };

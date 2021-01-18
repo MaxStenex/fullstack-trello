@@ -97,7 +97,7 @@ const Main = () => {
               <Column
                 key={column.id}
                 id={column.id}
-                title={column.title}
+                titleText={column.title}
                 tasks={column.tasks}
                 index={index}
               />
