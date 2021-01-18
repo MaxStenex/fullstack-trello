@@ -12,42 +12,48 @@ type PropsType = {
   id: string;
   title: string;
   tasks: TaskType[];
+  index: number;
 };
 
-const Column: React.FC<PropsType> = ({ title, id, tasks }) => {
+const Column: React.FC<PropsType> = ({ title, id, tasks, index }) => {
   return (
-    <Container>
-      <Header>
-        <Title>{title}</Title>
-        <FunctionsButton />
-      </Header>
-      <Droppable droppableId={id}>
-        {(provided) => (
-          <Tasks {...provided.droppableProps} ref={provided.innerRef}>
-            {tasks.map((task: TaskType, index) => (
-              <Draggable key={task.id} draggableId={task.id} index={index}>
-                {(provided) => (
-                  <Task
-                    {...provided.draggableProps}
-                    ref={provided.innerRef}
-                    {...provided.dragHandleProps}
-                  >
-                    <TaskText>{task.text}</TaskText>
-                    <TaskButton>
-                      <TaskButtonImage src={EditSvg} />
-                    </TaskButton>
-                  </Task>
-                )}
-              </Draggable>
-            ))}
-            {provided.placeholder}
-          </Tasks>
-        )}
-      </Droppable>
-      <AddButton>
-        <AddButtonText>+ Add another card</AddButtonText>
-      </AddButton>
-    </Container>
+    <Draggable draggableId={id} index={index}>
+      {(provided) => (
+        <Container {...provided.draggableProps} ref={provided.innerRef}>
+          <Header {...provided.dragHandleProps}>
+            <Title>{title}</Title>
+            <FunctionsButton />
+          </Header>
+          <Droppable droppableId={id} type="task">
+            {(provided) => (
+              <Tasks {...provided.droppableProps} ref={provided.innerRef}>
+                {tasks.map((task: TaskType, index) => (
+                  <Draggable key={task.id} draggableId={task.id} index={index}>
+                    {(provided, snapshot) => (
+                      <Task
+                        {...provided.draggableProps}
+                        ref={provided.innerRef}
+                        {...provided.dragHandleProps}
+                        isDragging={snapshot.isDragging}
+                      >
+                        <TaskText>{task.text}</TaskText>
+                        <TaskButton>
+                          <TaskButtonImage src={EditSvg} />
+                        </TaskButton>
+                      </Task>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </Tasks>
+            )}
+          </Droppable>
+          <AddButton>
+            <AddButtonText>+ Add another card</AddButtonText>
+          </AddButton>
+        </Container>
+      )}
+    </Draggable>
   );
 };
 
@@ -63,6 +69,7 @@ const Header = styled.div`
   display: flex;
   justify-content: space-between;
   margin-bottom: 8px;
+  cursor: pointer !important;
 `;
 const Title = styled.h3`
   font-weight: 600;
@@ -98,8 +105,8 @@ const Tasks = styled.ul`
   display: flex;
   flex-direction: column;
 `;
-const Task = styled.li`
-  background-color: #fff;
+const Task = styled.li<{ isDragging: boolean }>`
+  background-color: ${(props) => (props.isDragging ? "#dddfe4" : "#fff")};
   border-radius: 3px;
   margin-bottom: 6px;
   padding: 5px;
