@@ -1,9 +1,10 @@
 import styled from "styled-components";
+import { useState } from "react";
+
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import { v4 as uuidv4 } from "uuid";
 
-import { Column } from "./";
-import { useState } from "react";
+import { Column, AddColumnButton } from "./";
 
 const fakeColumns = [
   {
@@ -89,29 +90,39 @@ const Main = () => {
   };
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="all-columns" direction="horizontal" type="column">
-        {(provided) => (
-          <Container {...provided.droppableProps} ref={provided.innerRef}>
-            {columns.map((column, index) => (
-              <Column
-                key={column.id}
-                id={column.id}
-                titleText={column.title}
-                tasks={column.tasks}
-                index={index}
-              />
-            ))}
-            {provided.placeholder}
-          </Container>
-        )}
-      </Droppable>
-    </DragDropContext>
+    <Container>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="all-columns" direction="horizontal" type="column">
+          {(provided) => (
+            <DragContainer {...provided.droppableProps} ref={provided.innerRef}>
+              {columns.map((column, index) => (
+                <Column
+                  key={column.id}
+                  id={column.id}
+                  titleText={column.title}
+                  tasks={column.tasks}
+                  index={index}
+                />
+              ))}
+              {provided.placeholder}
+            </DragContainer>
+          )}
+        </Droppable>
+      </DragDropContext>
+      <AddColumnButton />
+    </Container>
   );
 };
 
 const Container = styled.div`
   display: flex;
+  margin: 20px 0px;
+  align-items: flex-start;
+`;
+const DragContainer = styled.div`
+  display: flex;
+  overflow-x: auto;
+  min-height: 100vh;
   align-items: flex-start;
 `;
 

@@ -83,7 +83,7 @@ const Container = styled.div`
   background-color: #ebecf0;
   padding: 0px 8px 8px 8px;
   font-size: 15px;
-  margin: 20px 0px 20px 20px;
+  margin-left: 15px;
 `;
 const Header = styled.div`
   padding-top: 15px;

@@ -1,8 +1,9 @@
-import { Main } from "../components/Tasks";
+import { Main, Header } from "../components/Tasks";
 
 const Tasks = () => {
   return (
     <>
+      <Header />
       <Main />
     </>
   );

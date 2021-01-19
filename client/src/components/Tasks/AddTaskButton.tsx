@@ -1,22 +1,34 @@
 import { useState } from "react";
 import styled from "styled-components";
 import CloseFormSvg from "../../images/close_form.svg";
+import { Form, Formik, Field } from "formik";
 
 const AddTaskButton = () => {
   const [isFormOpened, setFormOpened] = useState(false);
 
   return isFormOpened ? (
-    <Form>
-      <TodoText placeholder="Enter new card description" />
-      <Buttons>
-        <AddCard type="submit" className="addcard">
-          Add card
-        </AddCard>
-        <CloseFormButton onClick={() => setFormOpened(false)}>
-          <CloseFormImage src={CloseFormSvg} />
-        </CloseFormButton>
-      </Buttons>
-    </Form>
+    <Formik
+      initialValues={{ cardText: "" }}
+      onSubmit={(values: { cardText: string }) => {
+        console.log(values);
+      }}
+    >
+      {() => (
+        <TaskForm>
+          <TodoText
+            as="textarea"
+            name="cardText"
+            placeholder="Enter new card description"
+          />
+          <Buttons>
+            <AddCard type="submit">Add card</AddCard>
+            <CloseFormButton type="button" onClick={() => setFormOpened(false)}>
+              <CloseFormImage src={CloseFormSvg} />
+            </CloseFormButton>
+          </Buttons>
+        </TaskForm>
+      )}
+    </Formik>
   ) : (
     <AddButton onClick={() => setFormOpened(true)}>
       <AddButtonText>+ Add another card</AddButtonText>
@@ -39,11 +51,11 @@ const AddButton = styled.button`
 const AddButtonText = styled.span`
   font-size: 15px;
 `;
-const Form = styled.form`
+const TaskForm = styled(Form)`
   display: flex;
   flex-direction: column;
 `;
-const TodoText = styled.textarea`
+const TodoText = styled(Field)`
   padding: 5px;
   flex: 1;
   display: block;
