@@ -36,4 +36,7 @@ export class User extends BaseEntity {
 
   @CreateDateColumn()
   createdAt!: string;
+
+  @Column("int", { default: 0 })
+  tokenVersion!: number;
 }

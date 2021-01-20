@@ -2,7 +2,8 @@
 # import UserResponse from './user.graphql'
 
 type Query {
-  hello: String
+  hello: String!
+  me: UserResponse!
 }
 
 type Mutation {

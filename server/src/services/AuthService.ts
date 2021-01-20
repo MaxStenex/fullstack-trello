@@ -1,5 +1,6 @@
 import { Response, Request } from "express";
 import { sign, verify } from "jsonwebtoken";
+import { getConnection } from "typeorm";
 import { User } from "../entities/User";
 import { MyContext } from "../types/MyContext";
 
@@ -17,9 +18,13 @@ class AuthService {
   };
 
   createRefreshToken = (user: User) => {
-    return sign({ userId: user.id }, process.env.REFRESH_TOKEN_SECRET!, {
-      expiresIn: "7d",
-    });
+    return sign(
+      { userId: user.id, tokenVersion: user.tokenVersion },
+      process.env.REFRESH_TOKEN_SECRET!,
+      {
+        expiresIn: "7d",
+      }
+    );
   };
 
   sendRefreshToken = (res: Response, token: string) => {
@@ -29,23 +34,26 @@ class AuthService {
   };
 
   refreshTokens = async (req: Request, res: Response) => {
-    const invalidTokenResponse = () => res.status(401).send("Invalid token");
-
     const refreshToken = req.cookies.rt;
+
     if (!refreshToken) {
-      return invalidTokenResponse();
+      throw new Error("Invalid refresh token");
     }
 
     let payload = null;
     try {
       payload = verify(refreshToken, process.env.REFRESH_TOKEN_SECRET!) as any;
     } catch {
-      return invalidTokenResponse();
+      throw new Error("Invalid refresh token");
     }
 
     const user = await User.findOne({ id: payload.userId });
     if (!user) {
-      return res.status(403).send("User not found");
+      throw new Error("User not found");
+    }
+
+    if (user.tokenVersion !== payload.tokenVersion) {
+      throw new Error("Invalid token version");
     }
 
     const newRefreshToken = this.createRefreshToken(user);
@@ -53,14 +61,16 @@ class AuthService {
 
     this.sendAccessToken(res, newAccessToken);
     this.sendRefreshToken(res, newRefreshToken);
-    res.sendStatus(200);
   };
 
-  isAuth = (context: MyContext): void => {
+  isAuth = async (context: MyContext): Promise<void> => {
     const accessToken = context.req.cookies.at;
     if (!accessToken) {
       throw new Error("User not authenticated");
     }
+
+    await this.refreshTokens(context.req, context.res);
+
     try {
       const payload = verify(accessToken, process.env.ACCESS_TOKEN_SECRET!) as any;
       if (!payload.userId) {
@@ -68,8 +78,14 @@ class AuthService {
       }
       context.payload = payload;
     } catch (error) {
-      this.refreshTokens(context.req, context.res);
+      throw new Error("User not authenticated");
     }
+  };
+
+  revokeRefreshTokens = async (userId: number): Promise<void> => {
+    await getConnection()
+      .getRepository(User)
+      .increment({ id: userId }, "tokenVersion", 1);
   };
 }
 

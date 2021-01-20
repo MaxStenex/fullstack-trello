@@ -30,6 +30,15 @@ class UserService {
 
     return user;
   };
+
+  findUser = async (id: string): Promise<User> => {
+    const user = await User.findOne({ where: { id } });
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return user;
+  };
 }
 
 export default new UserService();
