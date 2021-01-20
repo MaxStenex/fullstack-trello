@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import CloseSvg from "../../images/close_form.svg";
 import UserPhoto from "../../images/user.png";
@@ -8,8 +8,24 @@ type Props = {
 };
 
 const HeaderPopup: React.FC<Props> = ({ closePopup }) => {
+  const popupRef = useRef<null | HTMLDivElement>(null);
+
+  useEffect(() => {
+    const clickHandler = (evt: any) => {
+      if (!evt.path.includes(popupRef.current)) {
+        closePopup();
+      }
+    };
+
+    window.addEventListener("click", clickHandler);
+
+    return () => {
+      window.removeEventListener("click", clickHandler);
+    };
+  }, [closePopup]);
+
   return (
-    <Container>
+    <Container ref={popupRef}>
       <Header>
         <Title>Account</Title>
         <CloseButton onClick={closePopup}>

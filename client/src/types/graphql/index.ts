@@ -29,3 +29,10 @@ export type LoginMutationResponseType = {
     errors: [string] | null;
   };
 };
+
+export type MeQueryResponseType = {
+  me: {
+    user: UserType | null;
+    errors: [string] | null;
+  };
+};
