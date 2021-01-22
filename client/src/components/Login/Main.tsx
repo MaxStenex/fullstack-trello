@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { LOGIN_MUTATION } from "../../graphql/mutation/login";
 import { LoginMutationResponseType, LoginMutationVarsType } from "../../types/graphql";
+import { useAuhDispatch } from "../../state/user/UserContext";
+import { setUser } from "../../state/user/actions";
 
 type FormValuesType = {
   email: string;
@@ -11,6 +13,8 @@ type FormValuesType = {
 };
 
 const Main = () => {
+  const authDispatch = useAuhDispatch();
+
   const [loginUser, { data, loading }] = useMutation<
     LoginMutationResponseType,
     LoginMutationVarsType
@@ -26,6 +30,7 @@ const Main = () => {
             const { data } = await loginUser({ variables: { email, password } });
             if (data?.login.user) {
               resetForm();
+              authDispatch(setUser(data.login.user));
             }
           }}
         >
@@ -37,6 +42,12 @@ const Main = () => {
                 data.login.errors.map((error: string) => (
                   <ErrorText key={error}>{error}</ErrorText>
                 ))}
+              {data?.login.user && (
+                <SuccessText>
+                  Successfully logged in, to <SuccessLink to="/tasks">Tasks</SuccessLink>
+                  <span> </span>page
+                </SuccessText>
+              )}
             </>
             <Submit isLoading={loading} disabled={loading} type="submit">
               Log In
@@ -129,6 +140,17 @@ const ErrorText = styled.span`
   display: block;
   color: red;
   margin-bottom: 10px;
+`;
+const SuccessText = styled.span`
+  display: block;
+  color: green;
+  margin-bottom: 10px;
+`;
+const SuccessLink = styled(Link)`
+  color: blue;
+  &:hover {
+    text-decoration: underline;
+  }
 `;
 
 export default Main;

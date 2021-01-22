@@ -4,7 +4,7 @@ import { ReactComponent as LogoImage } from "../../images/logo.svg";
 import { useAuthState } from "../../state/user/UserContext";
 
 const Header = () => {
-  const user = useAuthState();
+  const { user } = useAuthState();
 
   return (
     <Wrapper>

@@ -3,12 +3,19 @@ import { UserActions, UserActionTypes } from "./actions";
 
 export type AuthStateType = {
   user: null | UserType;
+  loading: boolean;
 };
 
-export const authReducer = (state: AuthStateType, action: UserActions) => {
+export const authReducer = (state: AuthStateType, action: UserActions): AuthStateType => {
   switch (action.type) {
     case UserActionTypes.SET_USER: {
-      return { user: action.user };
+      return { user: action.user, loading: false };
+    }
+    case UserActionTypes.SET_LOADING: {
+      return { ...state, loading: true };
+    }
+    case UserActionTypes.SET_LOADED: {
+      return { ...state, loading: false };
     }
 
     default: {

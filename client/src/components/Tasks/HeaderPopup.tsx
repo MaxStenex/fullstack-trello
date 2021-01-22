@@ -1,13 +1,16 @@
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import CloseSvg from "../../images/close_form.svg";
-import UserPhoto from "../../images/user.png";
+import UserPhoto from "../../images/user.svg";
+import { useAuthState } from "../../state/user/UserContext";
 
 type Props = {
   closePopup: () => void;
 };
 
 const HeaderPopup: React.FC<Props> = ({ closePopup }) => {
+  const { user } = useAuthState();
+
   const popupRef = useRef<null | HTMLDivElement>(null);
 
   useEffect(() => {
@@ -35,8 +38,8 @@ const HeaderPopup: React.FC<Props> = ({ closePopup }) => {
       <InfoSection>
         <Avatar src={UserPhoto} />
         <Text>
-          <Fullname>Bob</Fullname>
-          <Email>bob@bob.com</Email>
+          <Fullname>{user?.fullname}</Fullname>
+          <Email>{user?.email}</Email>
         </Text>
       </InfoSection>
       <LogoutButton>Log Out</LogoutButton>

@@ -10,9 +10,11 @@ export const PrivateRoute: React.FC<PrivateRouteProps> = ({
   component: Component,
   ...rest
 }) => {
-  const user = useAuthState();
+  const { user, loading } = useAuthState();
 
-  return (
+  return loading ? (
+    <div>Loading...</div>
+  ) : (
     <Route {...rest} render={() => (user ? <Component /> : <Redirect to="/login" />)} />
   );
 };
