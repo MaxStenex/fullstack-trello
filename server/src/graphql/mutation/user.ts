@@ -22,7 +22,6 @@ const register = async (
     }
 
     const user = await UserService.createUser(fullname, password, email);
-
     await validateOrReject(user);
 
     await user.save();

@@ -4,8 +4,11 @@ import {
   Column,
   BaseEntity,
   CreateDateColumn,
+  OneToMany,
 } from "typeorm";
 import { IsEmail, MaxLength, MinLength } from "class-validator";
+
+import { TaskColumn } from "./TaskColumn";
 
 @Entity()
 export class User extends BaseEntity {
@@ -39,4 +42,7 @@ export class User extends BaseEntity {
 
   @Column("int", { default: 0 })
   tokenVersion!: number;
+
+  @OneToMany(() => TaskColumn, (taskColumn) => taskColumn.user)
+  taskColumns: TaskColumn[];
 }
