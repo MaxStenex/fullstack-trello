@@ -1,6 +1,11 @@
 import AuthService from "../../services/AuthService";
 import TaskService from "../../services/TaskService";
-import { MutationCreateTaskColumnArgs, TaskColumnResponse } from "../../types/generated";
+import {
+  MutationCreateTaskArgs,
+  MutationCreateTaskColumnArgs,
+  TaskColumnResponse,
+  TaskResponse,
+} from "../../types/generated";
 import { MyContext } from "../../types/MyContext";
 
 const createTaskColumn = async (
@@ -18,9 +23,28 @@ const createTaskColumn = async (
     await taskColumn.save();
 
     return { taskColumn };
-  } catch (errors) {
-    return { errors: [errors.message] };
+  } catch (error) {
+    return { errors: [error.message] };
   }
 };
 
-export default { createTaskColumn };
+const createTask = async (
+  _: any,
+  { text, columnId }: MutationCreateTaskArgs,
+  context: MyContext
+): Promise<TaskResponse> => {
+  try {
+    await AuthService.isAuth(context);
+    if (text.length < 1) {
+      throw new Error("Text lenght should be greater then 0");
+    }
+    const task = await TaskService.createTask(text, columnId);
+    await task.save();
+
+    return { task };
+  } catch (error) {
+    return { errors: [error.message] };
+  }
+};
+
+export default { createTaskColumn, createTask };

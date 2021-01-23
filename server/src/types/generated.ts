@@ -18,7 +18,6 @@ export type Task = {
   id: Scalars['Int'];
   text: Scalars['String'];
   createdAt: Scalars['String'];
-  columnId: Scalars['Int'];
 };
 
 export type TaskColumn = {
@@ -45,10 +44,23 @@ export type TaskColumnResponse = {
   errors?: Maybe<Array<Scalars['String']>>;
 };
 
+export type TaskResponse = {
+  __typename?: 'TaskResponse';
+  task?: Maybe<Task>;
+  errors?: Maybe<Array<Scalars['String']>>;
+};
+
+export type UserTaskColumnsResponse = {
+  __typename?: 'UserTaskColumnsResponse';
+  taskColumns?: Maybe<Array<TaskColumn>>;
+  errors?: Maybe<Array<Scalars['String']>>;
+};
+
 export type Query = {
   __typename?: 'Query';
   hello: Scalars['String'];
   me: UserResponse;
+  userTaskColumns: UserTaskColumnsResponse;
 };
 
 export type UserResponse = {
@@ -62,6 +74,7 @@ export type Mutation = {
   register: UserResponse;
   login: UserResponse;
   createTaskColumn: TaskColumnResponse;
+  createTask: TaskResponse;
 };
 
 
@@ -78,6 +91,12 @@ export type MutationLoginArgs = {
 
 export type MutationCreateTaskColumnArgs = {
   title: Scalars['String'];
+};
+
+
+export type MutationCreateTaskArgs = {
+  text: Scalars['String'];
+  columnId: Scalars['Int'];
 };
 
 export type RegisterUserInput = {
@@ -170,6 +189,8 @@ export type ResolversTypes = {
   TaskColumn: ResolverTypeWrapper<TaskColumn>;
   User: ResolverTypeWrapper<User>;
   TaskColumnResponse: ResolverTypeWrapper<TaskColumnResponse>;
+  TaskResponse: ResolverTypeWrapper<TaskResponse>;
+  UserTaskColumnsResponse: ResolverTypeWrapper<UserTaskColumnsResponse>;
   Query: ResolverTypeWrapper<{}>;
   UserResponse: ResolverTypeWrapper<UserResponse>;
   Mutation: ResolverTypeWrapper<{}>;
@@ -185,6 +206,8 @@ export type ResolversParentTypes = {
   TaskColumn: TaskColumn;
   User: User;
   TaskColumnResponse: TaskColumnResponse;
+  TaskResponse: TaskResponse;
+  UserTaskColumnsResponse: UserTaskColumnsResponse;
   Query: {};
   UserResponse: UserResponse;
   Mutation: {};
@@ -196,7 +219,6 @@ export type TaskResolvers<ContextType = any, ParentType extends ResolversParentT
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   text?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  columnId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -224,9 +246,22 @@ export type TaskColumnResponseResolvers<ContextType = any, ParentType extends Re
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type TaskResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['TaskResponse'] = ResolversParentTypes['TaskResponse']> = {
+  task?: Resolver<Maybe<ResolversTypes['Task']>, ParentType, ContextType>;
+  errors?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type UserTaskColumnsResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserTaskColumnsResponse'] = ResolversParentTypes['UserTaskColumnsResponse']> = {
+  taskColumns?: Resolver<Maybe<Array<ResolversTypes['TaskColumn']>>, ParentType, ContextType>;
+  errors?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   hello?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   me?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType>;
+  userTaskColumns?: Resolver<ResolversTypes['UserTaskColumnsResponse'], ParentType, ContextType>;
 };
 
 export type UserResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserResponse'] = ResolversParentTypes['UserResponse']> = {
@@ -239,6 +274,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   register?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationRegisterArgs, 'input'>>;
   login?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'email' | 'password'>>;
   createTaskColumn?: Resolver<ResolversTypes['TaskColumnResponse'], ParentType, ContextType, RequireFields<MutationCreateTaskColumnArgs, 'title'>>;
+  createTask?: Resolver<ResolversTypes['TaskResponse'], ParentType, ContextType, RequireFields<MutationCreateTaskArgs, 'text' | 'columnId'>>;
 };
 
 export type Resolvers<ContextType = any> = {
@@ -246,6 +282,8 @@ export type Resolvers<ContextType = any> = {
   TaskColumn?: TaskColumnResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   TaskColumnResponse?: TaskColumnResponseResolvers<ContextType>;
+  TaskResponse?: TaskResponseResolvers<ContextType>;
+  UserTaskColumnsResponse?: UserTaskColumnsResponseResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   UserResponse?: UserResponseResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;

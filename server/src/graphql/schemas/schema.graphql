@@ -7,7 +7,6 @@ type Task {
   id: Int!
   text: String!
   createdAt: String!
-  columnId: Int!
 }
 
 type TaskColumn {
@@ -23,13 +22,25 @@ type TaskColumnResponse {
   errors: [String!]
 }
 
+type TaskResponse {
+  task: Task
+  errors: [String!]
+}
+
+type UserTaskColumnsResponse {
+  taskColumns: [TaskColumn!]
+  errors: [String!]
+}
+
 type Query {
   hello: String!
   me: UserResponse!
+  userTaskColumns: UserTaskColumnsResponse!
 }
 
 type Mutation {
   register(input: RegisterUserInput!): UserResponse!
   login(email: String!, password: String!): UserResponse!
   createTaskColumn(title: String!): TaskColumnResponse!
+  createTask(text: String!, columnId: Int!): TaskResponse!
 }

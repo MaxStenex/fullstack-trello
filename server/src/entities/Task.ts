@@ -17,9 +17,6 @@ export class Task extends BaseEntity {
   @Column()
   text!: string;
 
-  @Column()
-  columnId!: number;
-
   @CreateDateColumn()
   createdAt!: string;
 
