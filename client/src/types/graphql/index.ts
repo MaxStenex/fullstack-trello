@@ -14,7 +14,7 @@ export type RegisterMutationVarsType = {
 export type RegisterMutationResponseType = {
   register: {
     user: UserType | null;
-    errors: [string] | null;
+    errors: string[] | null;
   };
 };
 
@@ -26,14 +26,14 @@ export type LoginMutationVarsType = {
 export type LoginMutationResponseType = {
   login: {
     user: UserType | null;
-    errors: [string] | null;
+    errors: string[] | null;
   };
 };
 
 export type MeQueryResponseType = {
   me: {
     user: UserType | null;
-    errors: [string] | null;
+    errors: string[] | null;
   };
 };
 
@@ -51,6 +51,13 @@ export type TaskColumnType = {
 export type UserTaskColumnsQueryType = {
   userTaskColumns: {
     taskColumns: Array<TaskColumnType> | null;
-    errors: [string] | null;
+    errors: string[] | null;
+  };
+};
+
+export type CreateTaskColumnResponse = {
+  createTaskColumn: {
+    taskColumn: TaskColumnType | null;
+    errors: string[] | null;
   };
 };

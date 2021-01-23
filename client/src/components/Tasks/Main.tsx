@@ -103,20 +103,30 @@ const Main = () => {
           )}
         </Droppable>
       </DragDropContext>
-      <AddColumnButton />
+      <AddColumnButton
+        addColumn={(column) => {
+          setColumns((prevColumns) => {
+            if (prevColumns) {
+              return [...prevColumns, column];
+            }
+            return [column];
+          });
+        }}
+      />
     </Container>
   );
 };
 
 const Container = styled.div`
   display: flex;
-  margin: 20px 0px;
+  margin-top: 20px;
   align-items: flex-start;
+  overflow-x: auto;
+  // 100vh - (Header height + margin-top)
+  min-height: calc(100vh - 72px);
 `;
 const DragContainer = styled.div`
   display: flex;
-  overflow-x: auto;
-  min-height: 100vh;
   align-items: flex-start;
 `;
 

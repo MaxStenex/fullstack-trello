@@ -1,17 +1,33 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import CloseSvg from "../../images/close_form.svg";
 import { Form, Formik, Field } from "formik";
+import { useMutation } from "@apollo/client";
+import { CREATE_TASK_COLUMN_MUTATION } from "../../graphql/mutation/createTaskColumn";
+import { CreateTaskColumnResponse, TaskColumnType } from "../../types/graphql";
 
-const AddColumnButton = () => {
+type Props = {
+  addColumn: (column: TaskColumnType) => void;
+};
+
+const AddColumnButton: React.FC<Props> = ({ addColumn }) => {
   const [isFormOpened, setFormOpened] = useState(false);
+  const [createTaskColumn, { loading }] = useMutation<
+    CreateTaskColumnResponse,
+    { title: string }
+  >(CREATE_TASK_COLUMN_MUTATION);
 
   return isFormOpened ? (
     <Container>
       <Formik
         initialValues={{ columnTitle: "" }}
-        onSubmit={(values) => {
-          console.log(values);
+        onSubmit={async ({ columnTitle }, { resetForm }) => {
+          const { data } = await createTaskColumn({ variables: { title: columnTitle } });
+          if (data?.createTaskColumn.taskColumn) {
+            resetForm();
+            addColumn(data.createTaskColumn.taskColumn);
+            setFormOpened(false);
+          }
         }}
       >
         {() => (
@@ -22,7 +38,9 @@ const AddColumnButton = () => {
               name="columnTitle"
             />
             <Buttons>
-              <SubmitButton type="submit">Add List</SubmitButton>
+              <SubmitButton disabled={loading} type="submit">
+                Add List
+              </SubmitButton>
               <CloseButton type="button" onClick={() => setFormOpened(false)}>
                 <CloseButtonImage src={CloseSvg} alt="#" />
               </CloseButton>
@@ -41,8 +59,9 @@ const AddColumnButton = () => {
 };
 
 const Container = styled.div`
+  display: block;
   margin-left: 15px;
-  width: 272px;
+  min-width: 272px;
   border-radius: 5px;
   background-color: #ebecf0;
   font-size: 15px;

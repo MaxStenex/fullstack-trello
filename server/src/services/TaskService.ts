@@ -14,6 +14,7 @@ class TaskService {
     }
     taskColumn.title = title;
     taskColumn.user = creator;
+    taskColumn.tasks = [];
 
     return taskColumn;
   };
