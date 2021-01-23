@@ -36,3 +36,21 @@ export type MeQueryResponseType = {
     errors: [string] | null;
   };
 };
+
+export type TaskType = {
+  id: string;
+  text: string;
+};
+
+export type TaskColumnType = {
+  id: number;
+  title: string;
+  tasks: Array<TaskType>;
+};
+
+export type UserTaskColumnsQueryType = {
+  userTaskColumns: {
+    taskColumns: Array<TaskColumnType> | null;
+    errors: [string] | null;
+  };
+};

@@ -4,7 +4,7 @@
 # import User from './user.graphql'
 
 type Task {
-  id: Int!
+  id: String!
   text: String!
   createdAt: String!
 }

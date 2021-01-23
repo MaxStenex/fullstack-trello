@@ -3,11 +3,7 @@ import EditSvg from "../../images/edit.svg";
 import React, { useCallback, useRef, useState } from "react";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import AddTaskButton from "./AddTaskButton";
-
-type TaskType = {
-  id: string;
-  text: string;
-};
+import { TaskType } from "../../types/graphql";
 
 type PropsType = {
   id: string;
@@ -33,6 +29,7 @@ const Column: React.FC<PropsType> = ({ titleText, id, tasks, index }) => {
           {...provided.dragHandleProps}
           {...provided.draggableProps}
           ref={provided.innerRef}
+          onDragCapture={() => console.log("DRAGOVER")}
         >
           <Header>
             <Title
@@ -89,7 +86,6 @@ const Header = styled.div`
   padding-top: 15px;
   display: flex;
   justify-content: space-between;
-  margin-bottom: 8px;
   cursor: pointer !important;
 `;
 const Title = styled.input`
@@ -133,6 +129,7 @@ const FunctionsButton = styled.button`
 const Tasks = styled.ul`
   display: flex;
   flex-direction: column;
+  margin: 5px 0px;
 `;
 const Task = styled.li<{ isDragging: boolean }>`
   background-color: ${(props) => (props.isDragging ? "#dddfe4" : "#fff")};
@@ -146,6 +143,9 @@ const Task = styled.li<{ isDragging: boolean }>`
   &:hover,
   &:focus {
     background-color: #dddfe4;
+  }
+  &:last-child {
+    margin-bottom: 0;
   }
 `;
 const TaskText = styled.span`

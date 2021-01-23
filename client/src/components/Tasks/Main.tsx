@@ -1,35 +1,24 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
-import { v4 as uuidv4 } from "uuid";
 
 import { Column, AddColumnButton } from "./";
-
-const fakeColumns = [
-  {
-    id: "1",
-    tasks: [
-      { text: "Todo", id: uuidv4() },
-      { text: "Todododo", id: uuidv4() },
-    ],
-    title: "Today Todo",
-  },
-  {
-    id: "2",
-    tasks: [
-      { text: "Todo", id: uuidv4() },
-      { text: "Todododo", id: uuidv4() },
-    ],
-    title: "Tomorrow Todo",
-  },
-];
+import { useQuery } from "@apollo/client";
+import { USER_TASK_COLUMNS_QUERY } from "../../graphql/query/userTaskColumns";
+import { TaskColumnType, UserTaskColumnsQueryType } from "../../types/graphql";
 
 const Main = () => {
-  const [columns, setColumns] = useState(fakeColumns);
+  const [columns, setColumns] = useState<Array<TaskColumnType> | null>(null);
+  const { data } = useQuery<UserTaskColumnsQueryType>(USER_TASK_COLUMNS_QUERY);
+  useEffect(() => {
+    if (data?.userTaskColumns.taskColumns) {
+      setColumns(data.userTaskColumns.taskColumns);
+    }
+  }, [data?.userTaskColumns.taskColumns]);
 
   const onDragEnd = ({ source, destination, type }: DropResult) => {
-    if (!destination) {
+    if (!destination || !columns) {
       return;
     }
     if (
@@ -57,36 +46,40 @@ const Main = () => {
     }
 
     const sourceColumn = newColumns.filter(
-      (column) => column.id === source.droppableId
+      (column) => column.id.toString() === source.droppableId
     )[0];
     const draggableTask = sourceColumn.tasks.splice(source.index, 1)[0];
 
     if (source.droppableId === destination?.droppableId) {
       sourceColumn.tasks.splice(destination.index, 0, draggableTask);
 
-      return setColumns((prevColumns) =>
-        prevColumns.map((column) =>
-          column.id === sourceColumn.id ? sourceColumn : column
-        )
+      return setColumns(
+        (prevColumns) =>
+          prevColumns &&
+          prevColumns.map((column) =>
+            column.id === sourceColumn.id ? sourceColumn : column
+          )
       );
     }
 
     const destinationColumn = newColumns.filter(
-      (column) => column.id === destination?.droppableId
+      (column) => column.id.toString() === destination?.droppableId
     )[0];
     destinationColumn.tasks.splice(destination.index, 0, draggableTask);
 
-    return setColumns((prevColumns) => {
-      return prevColumns.map((column) => {
-        if (column.id === sourceColumn.id) {
-          return sourceColumn;
-        }
-        if (column.id === destinationColumn.id) {
-          return destinationColumn;
-        }
-        return column;
-      });
-    });
+    return setColumns(
+      (prevColumns) =>
+        prevColumns &&
+        prevColumns.map((column) => {
+          if (column.id === sourceColumn.id) {
+            return sourceColumn;
+          }
+          if (column.id === destinationColumn.id) {
+            return destinationColumn;
+          }
+          return column;
+        })
+    );
   };
 
   return (
@@ -95,15 +88,16 @@ const Main = () => {
         <Droppable droppableId="all-columns" direction="horizontal" type="column">
           {(provided) => (
             <DragContainer {...provided.droppableProps} ref={provided.innerRef}>
-              {columns.map((column, index) => (
-                <Column
-                  key={column.id}
-                  id={column.id}
-                  titleText={column.title}
-                  tasks={column.tasks}
-                  index={index}
-                />
-              ))}
+              {columns &&
+                columns.map((column, index) => (
+                  <Column
+                    key={column.id}
+                    id={column.id.toString()}
+                    titleText={column.title}
+                    tasks={column.tasks}
+                    index={index}
+                  />
+                ))}
               {provided.placeholder}
             </DragContainer>
           )}

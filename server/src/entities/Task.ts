@@ -1,18 +1,18 @@
 import {
   BaseEntity,
   CreateDateColumn,
-  PrimaryGeneratedColumn,
   ManyToOne,
   Entity,
   Column,
+  PrimaryGeneratedColumn,
 } from "typeorm";
 
 import { TaskColumn } from "./TaskColumn";
 
 @Entity()
 export class Task extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id!: number;
+  @PrimaryGeneratedColumn("uuid")
+  id!: string;
 
   @Column()
   text!: string;
