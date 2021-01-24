@@ -56,8 +56,15 @@ export type UserTaskColumnsQueryType = {
   };
 };
 
-export type CreateTaskColumnResponse = {
+export type CreateTaskColumnResponseType = {
   createTaskColumn: {
+    taskColumn: TaskColumnType | null;
+    errors: string[] | null;
+  };
+};
+
+export type UpdateColumnTitleResponseType = {
+  updateColumnTitle: {
     taskColumn: TaskColumnType | null;
     errors: string[] | null;
   };

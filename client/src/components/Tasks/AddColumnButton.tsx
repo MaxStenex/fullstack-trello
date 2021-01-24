@@ -4,7 +4,7 @@ import CloseSvg from "../../images/close_form.svg";
 import { Form, Formik, Field } from "formik";
 import { useMutation } from "@apollo/client";
 import { CREATE_TASK_COLUMN_MUTATION } from "../../graphql/mutation/createTaskColumn";
-import { CreateTaskColumnResponse, TaskColumnType } from "../../types/graphql";
+import { CreateTaskColumnResponseType, TaskColumnType } from "../../types/graphql";
 
 type Props = {
   addColumn: (column: TaskColumnType) => void;
@@ -14,7 +14,7 @@ type Props = {
 const AddColumnButton: React.FC<Props> = ({ addColumn, newColumnIndex }) => {
   const [isFormOpened, setFormOpened] = useState(false);
   const [createTaskColumn, { loading }] = useMutation<
-    CreateTaskColumnResponse,
+    CreateTaskColumnResponseType,
     { title: string; index: number }
   >(CREATE_TASK_COLUMN_MUTATION);
 

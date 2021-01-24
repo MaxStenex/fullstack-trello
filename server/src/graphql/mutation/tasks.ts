@@ -5,6 +5,7 @@ import {
   MutationCreateTaskColumnArgs,
   TaskColumnResponse,
   TaskResponse,
+  MutationUpdateColumnTitleArgs,
 } from "../../types/generated";
 import { MyContext } from "../../types/MyContext";
 
@@ -39,7 +40,6 @@ const createTask = async (
       throw new Error("Text lenght should be greater then 0");
     }
     const task = await TaskService.createTask(text, columnId);
-    await task.save();
 
     return { task };
   } catch (error) {
@@ -47,4 +47,20 @@ const createTask = async (
   }
 };
 
-export default { createTaskColumn, createTask };
+const updateColumnTitle = async (
+  _: any,
+  { columnId, title }: MutationUpdateColumnTitleArgs,
+  context: MyContext
+): Promise<TaskColumnResponse> => {
+  try {
+    await AuthService.isAuth(context);
+    const updatedColumn = await TaskService.updateTaskColumnTitle(columnId, title);
+    return {
+      taskColumn: updatedColumn,
+    };
+  } catch (error) {
+    return { errors: [error.message] };
+  }
+};
+
+export default { createTaskColumn, createTask, updateColumnTitle };

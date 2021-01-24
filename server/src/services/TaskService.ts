@@ -40,6 +40,7 @@ class TaskService {
     }
     task.text = text;
     task.taskColumn = taskColumn;
+    await task.save();
 
     return task;
   };
@@ -53,6 +54,20 @@ class TaskService {
     });
 
     return taskColumns;
+  };
+
+  updateTaskColumnTitle = async (
+    columnId: number,
+    title: string
+  ): Promise<TaskColumn> => {
+    const column = await TaskColumn.findOne({ where: { id: columnId } });
+    if (!column) {
+      throw new Error("Column not found");
+    }
+    column.title = title;
+    await column.save();
+
+    return column;
   };
 }
 

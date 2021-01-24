@@ -3,7 +3,9 @@ import EditSvg from "../../images/edit.svg";
 import React, { useCallback, useRef, useState } from "react";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import AddTaskButton from "./AddTaskButton";
-import { TaskType } from "../../types/graphql";
+import { TaskType, UpdateColumnTitleResponseType } from "../../types/graphql";
+import { useMutation } from "@apollo/client";
+import { UPDATE_COLUMN_TITLE_MUTATION } from "../../graphql/mutation/updateColumnTitle";
 
 type PropsType = {
   id: string;
@@ -13,6 +15,11 @@ type PropsType = {
 };
 
 const Column: React.FC<PropsType> = ({ titleText, id, tasks, index }) => {
+  const [updateTitle, { loading }] = useMutation<
+    UpdateColumnTitleResponseType,
+    { columnId: number; title: string }
+  >(UPDATE_COLUMN_TITLE_MUTATION);
+
   const [title, setTitle] = useState(titleText);
   const titleInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -38,8 +45,12 @@ const Column: React.FC<PropsType> = ({ titleText, id, tasks, index }) => {
               onChange={(evt: React.ChangeEvent<HTMLInputElement>) =>
                 setTitle(evt.currentTarget.value)
               }
+              onBlur={async () => {
+                await updateTitle({ variables: { columnId: +id, title } });
+              }}
               onKeyPress={closeForm}
               ref={titleInputRef}
+              disabled={loading}
             />
             <FunctionsButton />
           </Header>

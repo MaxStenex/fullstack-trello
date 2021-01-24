@@ -57,6 +57,7 @@ export type Mutation = {
   login: UserResponse;
   createTaskColumn: TaskColumnResponse;
   createTask: TaskResponse;
+  updateColumnTitle: TaskColumnResponse;
 };
 
 
@@ -79,6 +80,12 @@ export type MutationCreateTaskColumnArgs = {
 
 export type MutationCreateTaskArgs = {
   text: Scalars['String'];
+  columnId: Scalars['Int'];
+};
+
+
+export type MutationUpdateColumnTitleArgs = {
+  title: Scalars['String'];
   columnId: Scalars['Int'];
 };
 
@@ -259,6 +266,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   login?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'email' | 'password'>>;
   createTaskColumn?: Resolver<ResolversTypes['TaskColumnResponse'], ParentType, ContextType, RequireFields<MutationCreateTaskColumnArgs, 'title' | 'index'>>;
   createTask?: Resolver<ResolversTypes['TaskResponse'], ParentType, ContextType, RequireFields<MutationCreateTaskArgs, 'text' | 'columnId'>>;
+  updateColumnTitle?: Resolver<ResolversTypes['TaskColumnResponse'], ParentType, ContextType, RequireFields<MutationUpdateColumnTitleArgs, 'title' | 'columnId'>>;
 };
 
 export type TaskColumnResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['TaskColumnResponse'] = ResolversParentTypes['TaskColumnResponse']> = {
