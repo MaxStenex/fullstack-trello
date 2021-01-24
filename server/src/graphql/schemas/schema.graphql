@@ -1,36 +1,10 @@
 # import RegisterUserInput from './user.graphql'
 # import UserResponse from './user.graphql'
-
 # import User from './user.graphql'
 
-type Task {
-  id: String!
-  text: String!
-  createdAt: String!
-}
-
-type TaskColumn {
-  id: Int!
-  title: String!
-  createdAt: String!
-  user: User!
-  tasks: [Task!]
-}
-
-type TaskColumnResponse {
-  taskColumn: TaskColumn
-  errors: [String!]
-}
-
-type TaskResponse {
-  task: Task
-  errors: [String!]
-}
-
-type UserTaskColumnsResponse {
-  taskColumns: [TaskColumn!]
-  errors: [String!]
-}
+# import UserTaskColumnsResponse from './tasks.graphql'
+# import TaskResponse from './tasks.graphql'
+# import TaskColumnResponse from './tasks.graphql'
 
 type Query {
   hello: String!
@@ -41,6 +15,6 @@ type Query {
 type Mutation {
   register(input: RegisterUserInput!): UserResponse!
   login(email: String!, password: String!): UserResponse!
-  createTaskColumn(title: String!): TaskColumnResponse!
+  createTaskColumn(title: String!, index: Int!): TaskColumnResponse!
   createTask(text: String!, columnId: Int!): TaskResponse!
 }

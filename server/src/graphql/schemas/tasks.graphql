@@ -1,0 +1,31 @@
+# import User from './user.graphql'
+
+type Task {
+  id: String!
+  text: String!
+  createdAt: String!
+}
+
+type TaskColumn {
+  id: Int!
+  title: String!
+  createdAt: String!
+  user: User!
+  index: Int!
+  tasks: [Task!]
+}
+
+type TaskColumnResponse {
+  taskColumn: TaskColumn
+  errors: [String!]
+}
+
+type TaskResponse {
+  task: Task
+  errors: [String!]
+}
+
+type UserTaskColumnsResponse {
+  taskColumns: [TaskColumn!]
+  errors: [String!]
+}

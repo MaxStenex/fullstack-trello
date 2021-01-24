@@ -1,4 +1,4 @@
-# import TaskColumn from './schema.graphql'
+# import TaskColumn from './tasks.graphql'
 
 input RegisterUserInput {
   fullname: String!

@@ -8,13 +8,14 @@ import { CreateTaskColumnResponse, TaskColumnType } from "../../types/graphql";
 
 type Props = {
   addColumn: (column: TaskColumnType) => void;
+  newColumnIndex: number | null;
 };
 
-const AddColumnButton: React.FC<Props> = ({ addColumn }) => {
+const AddColumnButton: React.FC<Props> = ({ addColumn, newColumnIndex }) => {
   const [isFormOpened, setFormOpened] = useState(false);
   const [createTaskColumn, { loading }] = useMutation<
     CreateTaskColumnResponse,
-    { title: string }
+    { title: string; index: number }
   >(CREATE_TASK_COLUMN_MUTATION);
 
   return isFormOpened ? (
@@ -22,7 +23,9 @@ const AddColumnButton: React.FC<Props> = ({ addColumn }) => {
       <Formik
         initialValues={{ columnTitle: "" }}
         onSubmit={async ({ columnTitle }, { resetForm }) => {
-          const { data } = await createTaskColumn({ variables: { title: columnTitle } });
+          const { data } = await createTaskColumn({
+            variables: { title: columnTitle, index: newColumnIndex || 0 },
+          });
           if (data?.createTaskColumn.taskColumn) {
             resetForm();
             addColumn(data.createTaskColumn.taskColumn);

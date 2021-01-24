@@ -13,7 +13,11 @@ const Main = () => {
   const { data } = useQuery<UserTaskColumnsQueryType>(USER_TASK_COLUMNS_QUERY);
   useEffect(() => {
     if (data?.userTaskColumns.taskColumns) {
-      setColumns(data.userTaskColumns.taskColumns);
+      const sortedColumns = [...data.userTaskColumns.taskColumns].sort((a, b) => {
+        return a.index - b.index;
+      });
+
+      setColumns(sortedColumns);
     }
   }, [data?.userTaskColumns.taskColumns]);
 
@@ -40,6 +44,7 @@ const Main = () => {
 
     if (type === "column") {
       const draggableColumn = newColumns.splice(source.index, 1)[0];
+
       newColumns.splice(destination.index, 0, draggableColumn);
 
       return setColumns(newColumns);
@@ -112,6 +117,7 @@ const Main = () => {
             return [column];
           });
         }}
+        newColumnIndex={columns && columns.length}
       />
     </Container>
   );

@@ -6,6 +6,7 @@ export const USER_TASK_COLUMNS_QUERY = gql`
       taskColumns {
         id
         title
+        index
         tasks {
           id
           text

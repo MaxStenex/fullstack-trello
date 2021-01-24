@@ -10,7 +10,7 @@ import { MyContext } from "../../types/MyContext";
 
 const createTaskColumn = async (
   _: any,
-  { title }: MutationCreateTaskColumnArgs,
+  { title, index }: MutationCreateTaskColumnArgs,
   context: MyContext
 ): Promise<TaskColumnResponse> => {
   try {
@@ -19,7 +19,7 @@ const createTaskColumn = async (
       throw new Error("Title lenght should be greater then 0");
     }
 
-    const taskColumn = await TaskService.createTaskColumn(title, context);
+    const taskColumn = await TaskService.createTaskColumn(title, index, context);
     await taskColumn.save();
 
     return { taskColumn };

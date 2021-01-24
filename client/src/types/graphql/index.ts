@@ -45,6 +45,7 @@ export type TaskType = {
 export type TaskColumnType = {
   id: number;
   title: string;
+  index: number;
   tasks: Array<TaskType>;
 };
 
