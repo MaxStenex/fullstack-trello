@@ -6,7 +6,7 @@ import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import { Column, AddColumnButton } from "./";
 import { useQuery } from "@apollo/client";
 import { USER_TASK_COLUMNS_QUERY } from "../../graphql/query/userTaskColumns";
-import { TaskColumnType, UserTaskColumnsQueryType } from "../../types/graphql";
+import { TaskColumnType, TaskType, UserTaskColumnsQueryType } from "../../types/graphql";
 
 const Main = () => {
   const [columns, setColumns] = useState<Array<TaskColumnType> | null>(null);
@@ -32,7 +32,7 @@ const Main = () => {
       return;
     }
 
-    //Deep object copy
+    //Deep array copy
     const newColumns = [
       ...columns.map((column) => {
         return {
@@ -101,6 +101,25 @@ const Main = () => {
                     titleText={column.title}
                     tasks={column.tasks}
                     index={index}
+                    addTask={(newTask: TaskType, columnId: number) => {
+                      const newColumns = [
+                        ...columns.map((column) => {
+                          return {
+                            ...column,
+                            tasks: [...column.tasks],
+                          };
+                        }),
+                      ];
+                      setColumns(
+                        newColumns.map((column) => {
+                          if (column.id === columnId) {
+                            column.tasks = [...column.tasks, newTask];
+                            return column;
+                          }
+                          return column;
+                        })
+                      );
+                    }}
                   />
                 ))}
               {provided.placeholder}

@@ -1,27 +1,48 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import CloseFormSvg from "../../images/close_form.svg";
 import { Form, Formik, Field } from "formik";
+import { useMutation } from "@apollo/client";
+import { CREATE_TASK_MUTATION } from "../../graphql/mutation/createTask";
+import { CreateTaskResponseType, TaskType } from "../../types/graphql";
 
-const AddTaskButton = () => {
+type Props = {
+  columnId: number;
+  addTask: (newTask: TaskType, columnId: number) => void;
+};
+
+const AddTaskButton: React.FC<Props> = ({ columnId, addTask }) => {
+  const [createTask, { loading }] = useMutation<
+    CreateTaskResponseType,
+    { text: string; columnId: number }
+  >(CREATE_TASK_MUTATION);
+
   const [isFormOpened, setFormOpened] = useState(false);
 
   return isFormOpened ? (
     <Formik
       initialValues={{ cardText: "" }}
-      onSubmit={(values: { cardText: string }) => {
-        console.log(values);
+      onSubmit={async ({ cardText }, { resetForm }) => {
+        const response = await createTask({ variables: { text: cardText, columnId } });
+        if (response.data?.createTask.task) {
+          addTask(response.data.createTask.task, columnId);
+          resetForm();
+          setFormOpened(false);
+        }
       }}
     >
       {() => (
         <TaskForm>
           <TodoText
-            as="textarea"
+            component="textarea"
             name="cardText"
             placeholder="Enter new card description"
+            autoFocus
           />
           <Buttons>
-            <AddCard type="submit">Add card</AddCard>
+            <AddCard disabled={loading} type="submit">
+              {loading ? "Loading..." : "Add card"}
+            </AddCard>
             <CloseFormButton type="button" onClick={() => setFormOpened(false)}>
               <CloseFormImage src={CloseFormSvg} />
             </CloseFormButton>

@@ -15,7 +15,7 @@ const HeaderPopup: React.FC<Props> = ({ closePopup }) => {
 
   useEffect(() => {
     const clickHandler = (evt: any) => {
-      if (!evt.path.includes(popupRef.current)) {
+      if (!evt.path.includes(popupRef.current) && popupRef.current) {
         closePopup();
       }
     };

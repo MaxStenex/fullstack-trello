@@ -69,3 +69,10 @@ export type UpdateColumnTitleResponseType = {
     errors: string[] | null;
   };
 };
+
+export type CreateTaskResponseType = {
+  createTask: {
+    task: TaskType | null;
+    errors: string[] | null;
+  };
+};

@@ -12,9 +12,10 @@ type PropsType = {
   titleText: string;
   tasks: TaskType[];
   index: number;
+  addTask: (newTask: TaskType, columnId: number) => void;
 };
 
-const Column: React.FC<PropsType> = ({ titleText, id, tasks, index }) => {
+const Column: React.FC<PropsType> = ({ titleText, id, tasks, index, addTask }) => {
   const [updateTitle, { loading }] = useMutation<
     UpdateColumnTitleResponseType,
     { columnId: number; title: string }
@@ -36,7 +37,6 @@ const Column: React.FC<PropsType> = ({ titleText, id, tasks, index }) => {
           {...provided.dragHandleProps}
           {...provided.draggableProps}
           ref={provided.innerRef}
-          onDragCapture={() => console.log("DRAGOVER")}
         >
           <Header>
             <Title
@@ -78,7 +78,7 @@ const Column: React.FC<PropsType> = ({ titleText, id, tasks, index }) => {
               </Tasks>
             )}
           </Droppable>
-          <AddTaskButton />
+          <AddTaskButton columnId={+id} addTask={addTask} />
         </Container>
       )}
     </Draggable>
