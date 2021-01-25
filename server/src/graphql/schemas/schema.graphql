@@ -1,6 +1,7 @@
 # import RegisterUserInput from './user.graphql'
 # import UserResponse from './user.graphql'
 # import User from './user.graphql'
+# import LogoutResponse from './user.graphql'
 
 # import UserTaskColumnsResponse from './tasks.graphql'
 # import TaskResponse from './tasks.graphql'
@@ -18,4 +19,5 @@ type Mutation {
   createTaskColumn(title: String!, index: Int!): TaskColumnResponse!
   createTask(text: String!, columnId: Int!): TaskResponse!
   updateColumnTitle(title: String!, columnId: Int!): TaskColumnResponse!
+  logout: LogoutResponse!
 }

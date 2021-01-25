@@ -1,3 +1,5 @@
+type ErrorsType = Array<string> | null;
+
 export type UserType = {
   id: number;
   fullname: string;
@@ -14,7 +16,7 @@ export type RegisterMutationVarsType = {
 export type RegisterMutationResponseType = {
   register: {
     user: UserType | null;
-    errors: string[] | null;
+    errors: ErrorsType;
   };
 };
 
@@ -26,14 +28,14 @@ export type LoginMutationVarsType = {
 export type LoginMutationResponseType = {
   login: {
     user: UserType | null;
-    errors: string[] | null;
+    errors: ErrorsType;
   };
 };
 
 export type MeQueryResponseType = {
   me: {
     user: UserType | null;
-    errors: string[] | null;
+    errors: ErrorsType;
   };
 };
 
@@ -52,27 +54,34 @@ export type TaskColumnType = {
 export type UserTaskColumnsQueryType = {
   userTaskColumns: {
     taskColumns: Array<TaskColumnType> | null;
-    errors: string[] | null;
+    errors: ErrorsType;
   };
 };
 
 export type CreateTaskColumnResponseType = {
   createTaskColumn: {
     taskColumn: TaskColumnType | null;
-    errors: string[] | null;
+    errors: ErrorsType;
   };
 };
 
 export type UpdateColumnTitleResponseType = {
   updateColumnTitle: {
     taskColumn: TaskColumnType | null;
-    errors: string[] | null;
+    errors: ErrorsType;
   };
 };
 
 export type CreateTaskResponseType = {
   createTask: {
     task: TaskType | null;
-    errors: string[] | null;
+    errors: ErrorsType;
+  };
+};
+
+export type LogoutResponseType = {
+  logout: {
+    isSuccess: boolean | null;
+    errors: ErrorsType;
   };
 };

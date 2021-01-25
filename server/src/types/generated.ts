@@ -58,6 +58,7 @@ export type Mutation = {
   createTaskColumn: TaskColumnResponse;
   createTask: TaskResponse;
   updateColumnTitle: TaskColumnResponse;
+  logout: LogoutResponse;
 };
 
 
@@ -112,6 +113,12 @@ export type Task = {
   id: Scalars['String'];
   text: Scalars['String'];
   createdAt: Scalars['String'];
+};
+
+export type LogoutResponse = {
+  __typename?: 'LogoutResponse';
+  isSuccess?: Maybe<Scalars['Boolean']>;
+  errors?: Maybe<Array<Scalars['String']>>;
 };
 
 
@@ -204,6 +211,7 @@ export type ResolversTypes = {
   TaskColumnResponse: ResolverTypeWrapper<TaskColumnResponse>;
   TaskResponse: ResolverTypeWrapper<TaskResponse>;
   Task: ResolverTypeWrapper<Task>;
+  LogoutResponse: ResolverTypeWrapper<LogoutResponse>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 };
 
@@ -221,6 +229,7 @@ export type ResolversParentTypes = {
   TaskColumnResponse: TaskColumnResponse;
   TaskResponse: TaskResponse;
   Task: Task;
+  LogoutResponse: LogoutResponse;
   Boolean: Scalars['Boolean'];
 };
 
@@ -267,6 +276,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createTaskColumn?: Resolver<ResolversTypes['TaskColumnResponse'], ParentType, ContextType, RequireFields<MutationCreateTaskColumnArgs, 'title' | 'index'>>;
   createTask?: Resolver<ResolversTypes['TaskResponse'], ParentType, ContextType, RequireFields<MutationCreateTaskArgs, 'text' | 'columnId'>>;
   updateColumnTitle?: Resolver<ResolversTypes['TaskColumnResponse'], ParentType, ContextType, RequireFields<MutationUpdateColumnTitleArgs, 'title' | 'columnId'>>;
+  logout?: Resolver<ResolversTypes['LogoutResponse'], ParentType, ContextType>;
 };
 
 export type TaskColumnResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['TaskColumnResponse'] = ResolversParentTypes['TaskColumnResponse']> = {
@@ -288,6 +298,12 @@ export type TaskResolvers<ContextType = any, ParentType extends ResolversParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type LogoutResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['LogoutResponse'] = ResolversParentTypes['LogoutResponse']> = {
+  isSuccess?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  errors?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type Resolvers<ContextType = any> = {
   Query?: QueryResolvers<ContextType>;
   UserResponse?: UserResponseResolvers<ContextType>;
@@ -298,6 +314,7 @@ export type Resolvers<ContextType = any> = {
   TaskColumnResponse?: TaskColumnResponseResolvers<ContextType>;
   TaskResponse?: TaskResponseResolvers<ContextType>;
   Task?: TaskResolvers<ContextType>;
+  LogoutResponse?: LogoutResponseResolvers<ContextType>;
 };
 
 

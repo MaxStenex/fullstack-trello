@@ -82,10 +82,17 @@ class AuthService {
     }
   };
 
-  revokeRefreshTokens = async (userId: number): Promise<void> => {
+  revokeRefreshTokens = async (context: MyContext): Promise<true> => {
+    if (!context.payload?.userId) {
+      throw new Error("User not authenticated");
+    }
+
+    const userId = context.payload.userId;
     await getConnection()
       .getRepository(User)
       .increment({ id: userId }, "tokenVersion", 1);
+
+    return true;
   };
 }
 

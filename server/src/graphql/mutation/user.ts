@@ -2,6 +2,7 @@ import {
   MutationRegisterArgs,
   UserResponse,
   MutationLoginArgs,
+  LogoutResponse,
 } from "../../types/generated";
 import { validateOrReject } from "class-validator";
 import UserService from "../../services/UserService";
@@ -66,4 +67,16 @@ const login = async (
   }
 };
 
-export default { register, login };
+const logout = async (_: any, __: any, context: MyContext): Promise<LogoutResponse> => {
+  try {
+    await AuthService.isAuth(context);
+    const success = await AuthService.revokeRefreshTokens(context);
+    return {
+      isSuccess: success,
+    };
+  } catch (error) {
+    return { errors: [error.message] };
+  }
+};
+
+export default { register, login, logout };

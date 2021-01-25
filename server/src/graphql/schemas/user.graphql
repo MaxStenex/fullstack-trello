@@ -18,3 +18,8 @@ type UserResponse {
   user: User
   errors: [String!]
 }
+
+type LogoutResponse {
+  isSuccess: Boolean
+  errors: [String!]
+}

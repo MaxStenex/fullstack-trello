@@ -1,17 +1,32 @@
+import { useMutation } from "@apollo/client";
 import React, { useEffect, useRef } from "react";
+import { useHistory } from "react-router-dom";
 import styled from "styled-components";
+import { LOGOUT_MUTATION } from "../../graphql/mutation/logouts";
 import CloseSvg from "../../images/close_form.svg";
 import UserPhoto from "../../images/user.svg";
-import { useAuthState } from "../../state/user/UserContext";
+import { logoutUser } from "../../state/user/actions";
+import { useAuhDispatch, useAuthState } from "../../state/user/UserContext";
+import { LogoutResponseType } from "../../types/graphql";
 
 type Props = {
   closePopup: () => void;
 };
 
 const HeaderPopup: React.FC<Props> = ({ closePopup }) => {
+  const history = useHistory();
   const { user } = useAuthState();
-
+  const authDispatch = useAuhDispatch();
+  const [logout] = useMutation<LogoutResponseType>(LOGOUT_MUTATION);
   const popupRef = useRef<null | HTMLDivElement>(null);
+
+  const onLogout = async () => {
+    const response = await logout();
+    if (response.data?.logout.isSuccess === true) {
+      authDispatch(logoutUser());
+      history.push("/home");
+    }
+  };
 
   useEffect(() => {
     const clickHandler = (evt: any) => {
@@ -21,7 +36,6 @@ const HeaderPopup: React.FC<Props> = ({ closePopup }) => {
     };
 
     window.addEventListener("click", clickHandler);
-
     return () => {
       window.removeEventListener("click", clickHandler);
     };
@@ -42,7 +56,7 @@ const HeaderPopup: React.FC<Props> = ({ closePopup }) => {
           <Email>{user?.email}</Email>
         </Text>
       </InfoSection>
-      <LogoutButton>Log Out</LogoutButton>
+      <LogoutButton onClick={onLogout}>Log Out</LogoutButton>
     </Container>
   );
 };
