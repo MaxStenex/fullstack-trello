@@ -81,7 +81,21 @@ export type CreateTaskResponseType = {
 
 export type LogoutResponseType = {
   logout: {
-    isSuccess: boolean | null;
+    isSuccess: boolean;
+    errors: ErrorsType;
+  };
+};
+
+export type DeleteTaskColumnResponse = {
+  deleteColumn: {
+    isSuccess: boolean;
+    errors: ErrorsType;
+  };
+};
+
+export type DeleteTaskResponse = {
+  deleteTask: {
+    isSuccess: boolean;
     errors: ErrorsType;
   };
 };

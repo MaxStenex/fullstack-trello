@@ -1,11 +1,19 @@
 import styled from "styled-components";
-import EditSvg from "../../images/edit.svg";
 import React, { useCallback, useRef, useState } from "react";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import AddTaskButton from "./AddTaskButton";
-import { TaskType, UpdateColumnTitleResponseType } from "../../types/graphql";
+import {
+  DeleteTaskColumnResponse,
+  DeleteTaskResponse,
+  TaskType,
+  UpdateColumnTitleResponseType,
+} from "../../types/graphql";
 import { useMutation } from "@apollo/client";
 import { UPDATE_COLUMN_TITLE_MUTATION } from "../../graphql/mutation/updateColumnTitle";
+import DeleteTaskSvg from "../../images/deleteTask.svg";
+import DeleteColumnSvg from "../../images/deleteColumn.svg";
+import { DELETE_TASK_MUTATION } from "../../graphql/mutation/deleteTask";
+import { DELETE_TASK_COLUMN_MUTATION } from "../../graphql/mutation/deleteTaskColumn";
 
 type PropsType = {
   id: string;
@@ -13,13 +21,30 @@ type PropsType = {
   tasks: TaskType[];
   index: number;
   addTask: (newTask: TaskType, columnId: number) => void;
+  deleteTask: (taskId: string, columnId: number) => void;
+  deleteColumn: (columnId: number) => void;
 };
 
-const Column: React.FC<PropsType> = ({ titleText, id, tasks, index, addTask }) => {
+const Column: React.FC<PropsType> = ({
+  titleText,
+  id,
+  tasks,
+  index,
+  addTask,
+  deleteTask,
+  deleteColumn,
+}) => {
   const [updateTitle, { loading }] = useMutation<
     UpdateColumnTitleResponseType,
     { columnId: number; title: string }
   >(UPDATE_COLUMN_TITLE_MUTATION);
+  const [deleteTaskMutation] = useMutation<DeleteTaskResponse, { taskId: string }>(
+    DELETE_TASK_MUTATION
+  );
+  const [deleteColumnMutation] = useMutation<
+    DeleteTaskColumnResponse,
+    { columnId: number }
+  >(DELETE_TASK_COLUMN_MUTATION);
 
   const [title, setTitle] = useState(titleText);
   const titleInputRef = useRef<HTMLInputElement | null>(null);
@@ -52,7 +77,18 @@ const Column: React.FC<PropsType> = ({ titleText, id, tasks, index, addTask }) =
               ref={titleInputRef}
               disabled={loading}
             />
-            <FunctionsButton />
+            <DeleteColumnButton
+              onClick={async () => {
+                const response = await deleteColumnMutation({
+                  variables: { columnId: +id },
+                });
+                if (response.data?.deleteColumn.isSuccess === true) {
+                  deleteColumn(+id);
+                }
+              }}
+            >
+              <DeleteColumnImage src={DeleteColumnSvg} />
+            </DeleteColumnButton>
           </Header>
           <Droppable droppableId={id} type="task">
             {(provided) => (
@@ -67,9 +103,19 @@ const Column: React.FC<PropsType> = ({ titleText, id, tasks, index, addTask }) =
                         isDragging={snapshot.isDragging}
                       >
                         <TaskText>{task.text}</TaskText>
-                        <TaskButton>
-                          <TaskButtonImage src={EditSvg} />
-                        </TaskButton>
+                        <DeleteTaskButton
+                          onClick={async () => {
+                            const response = await deleteTaskMutation({
+                              variables: { taskId: task.id },
+                            });
+
+                            if (response.data?.deleteTask.isSuccess === true) {
+                              deleteTask(task.id, +id);
+                            }
+                          }}
+                        >
+                          <DeleteTaskImage src={DeleteTaskSvg} />
+                        </DeleteTaskButton>
                       </Task>
                     )}
                   </Draggable>
@@ -116,7 +162,7 @@ const Title = styled.input`
     border: 2px solid #377adf;
   }
 `;
-const FunctionsButton = styled.button`
+const DeleteColumnButton = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -125,17 +171,15 @@ const FunctionsButton = styled.button`
   height: 32px;
   padding: 5px;
   border-radius: 2px;
-  &::before {
-    content: "...";
-    position: absolute;
-    top: 0px;
-    font-size: 20px;
-  }
   &:hover,
   &:focus {
     transition: 0.15s;
     background-color: rgba(9, 30, 66, 0.08);
   }
+`;
+const DeleteColumnImage = styled.img`
+  width: 100%;
+  height: 100%;
 `;
 const Tasks = styled.ul`
   display: flex;
@@ -164,7 +208,7 @@ const TaskText = styled.span`
   align-items: center;
   justify-content: center;
 `;
-const TaskButton = styled.button`
+const DeleteTaskButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -178,7 +222,7 @@ const TaskButton = styled.button`
     background-color: #bdc1cc;
   }
 `;
-const TaskButtonImage = styled.img`
+const DeleteTaskImage = styled.img`
   width: 100%;
   height: 100%;
 `;

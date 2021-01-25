@@ -29,3 +29,8 @@ type UserTaskColumnsResponse {
   taskColumns: [TaskColumn!]
   errors: [String!]
 }
+
+type DeleteResponse {
+  isSuccess: Boolean!
+  errors: [String!]
+}

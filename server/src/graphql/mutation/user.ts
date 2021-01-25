@@ -75,7 +75,7 @@ const logout = async (_: any, __: any, context: MyContext): Promise<LogoutRespon
       isSuccess: success,
     };
   } catch (error) {
-    return { errors: [error.message] };
+    return { isSuccess: false, errors: [error.message] };
   }
 };
 

@@ -39,6 +39,7 @@ const AddColumnButton: React.FC<Props> = ({ addColumn, newColumnIndex }) => {
               placeholder="Enter list title..."
               type="text"
               name="columnTitle"
+              autoFocus
             />
             <Buttons>
               <SubmitButton disabled={loading} type="submit">

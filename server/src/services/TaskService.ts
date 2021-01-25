@@ -69,6 +69,27 @@ class TaskService {
 
     return column;
   };
+
+  deleteTask = async (taskId: string): Promise<boolean> => {
+    const task = await Task.findOne(taskId);
+    if (!task) {
+      throw new Error("Invalid task id");
+    }
+    task.remove();
+    return false;
+  };
+
+  deleteColumn = async (columnId: number): Promise<true> => {
+    const column = await TaskColumn.findOne(columnId);
+    if (!column) {
+      throw new Error("Invalid column id");
+    }
+    column.tasks = [];
+    await column.save();
+    await TaskColumn.delete(columnId);
+
+    return true;
+  };
 }
 
 export default new TaskService();

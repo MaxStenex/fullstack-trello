@@ -7,6 +7,7 @@ import { Column, AddColumnButton } from "./";
 import { useQuery } from "@apollo/client";
 import { USER_TASK_COLUMNS_QUERY } from "../../graphql/query/userTaskColumns";
 import { TaskColumnType, TaskType, UserTaskColumnsQueryType } from "../../types/graphql";
+import { makeTaskColumnsCopy } from "../../utils/makeTaskColumnsCopy";
 
 const Main = () => {
   const [columns, setColumns] = useState<Array<TaskColumnType> | null>(null);
@@ -33,14 +34,7 @@ const Main = () => {
     }
 
     //Deep array copy
-    const newColumns = [
-      ...columns.map((column) => {
-        return {
-          ...column,
-          tasks: [...column.tasks],
-        };
-      }),
-    ];
+    const newColumns = makeTaskColumnsCopy(columns);
 
     if (type === "column") {
       const draggableColumn = newColumns.splice(source.index, 1)[0];
@@ -101,19 +95,30 @@ const Main = () => {
                     titleText={column.title}
                     tasks={column.tasks}
                     index={index}
+                    deleteColumn={(columnId) => {
+                      const newColumns = makeTaskColumnsCopy(columns);
+                      setColumns(newColumns.filter((column) => column.id !== columnId));
+                    }}
                     addTask={(newTask: TaskType, columnId: number) => {
-                      const newColumns = [
-                        ...columns.map((column) => {
-                          return {
-                            ...column,
-                            tasks: [...column.tasks],
-                          };
-                        }),
-                      ];
+                      const newColumns = makeTaskColumnsCopy(columns);
                       setColumns(
                         newColumns.map((column) => {
                           if (column.id === columnId) {
                             column.tasks = [...column.tasks, newTask];
+                            return column;
+                          }
+                          return column;
+                        })
+                      );
+                    }}
+                    deleteTask={(taskId, columnId) => {
+                      const newColumns = makeTaskColumnsCopy(columns);
+                      setColumns(
+                        newColumns.map((column) => {
+                          if (column.id === columnId) {
+                            column.tasks = column.tasks.filter(
+                              (task) => task.id !== taskId
+                            );
                             return column;
                           }
                           return column;

@@ -6,6 +6,9 @@ import {
   TaskColumnResponse,
   TaskResponse,
   MutationUpdateColumnTitleArgs,
+  DeleteResponse,
+  MutationDeleteTaskArgs,
+  MutationDeleteColumnArgs,
 } from "../../types/generated";
 import { MyContext } from "../../types/MyContext";
 
@@ -63,4 +66,42 @@ const updateColumnTitle = async (
   }
 };
 
-export default { createTaskColumn, createTask, updateColumnTitle };
+const deleteTask = async (
+  _: any,
+  { taskId }: MutationDeleteTaskArgs,
+  context: MyContext
+): Promise<DeleteResponse> => {
+  try {
+    await AuthService.isAuth(context);
+    await TaskService.deleteTask(taskId);
+
+    return { isSuccess: true };
+  } catch (error) {
+    return { isSuccess: false, errors: [error.message] };
+  }
+};
+
+const deleteColumn = async (
+  _: any,
+  { columnId }: MutationDeleteColumnArgs,
+  context: MyContext
+): Promise<DeleteResponse> => {
+  try {
+    await AuthService.isAuth(context);
+    await TaskService.deleteColumn(columnId);
+
+    return {
+      isSuccess: true,
+    };
+  } catch (error) {
+    return { isSuccess: false, errors: [error.message] };
+  }
+};
+
+export default {
+  createTaskColumn,
+  createTask,
+  updateColumnTitle,
+  deleteTask,
+  deleteColumn,
+};

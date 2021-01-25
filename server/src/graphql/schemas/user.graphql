@@ -20,6 +20,6 @@ type UserResponse {
 }
 
 type LogoutResponse {
-  isSuccess: Boolean
+  isSuccess: Boolean!
   errors: [String!]
 }

@@ -6,6 +6,7 @@
 # import UserTaskColumnsResponse from './tasks.graphql'
 # import TaskResponse from './tasks.graphql'
 # import TaskColumnResponse from './tasks.graphql'
+# import DeleteResponse from './tasks.graphql'
 
 type Query {
   hello: String!
@@ -20,4 +21,6 @@ type Mutation {
   createTask(text: String!, columnId: Int!): TaskResponse!
   updateColumnTitle(title: String!, columnId: Int!): TaskColumnResponse!
   logout: LogoutResponse!
+  deleteTask(taskId: String!): DeleteResponse!
+  deleteColumn(columnId: Int!): DeleteResponse!
 }
