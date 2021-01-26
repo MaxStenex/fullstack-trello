@@ -32,7 +32,7 @@ class TaskService {
     return taskColumn;
   };
 
-  createTask = async (text: string, columnId: number): Promise<Task> => {
+  createTask = async (text: string, columnId: number, index: number): Promise<Task> => {
     const task = new Task();
     const taskColumn = await TaskColumn.findOne({ where: { id: columnId } });
 
@@ -41,6 +41,7 @@ class TaskService {
     }
     task.text = text;
     task.taskColumn = taskColumn;
+    task.index = index;
     await task.save();
 
     return task;

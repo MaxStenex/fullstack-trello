@@ -19,7 +19,7 @@ type Mutation {
   register(input: RegisterUserInput!): UserResponse!
   login(email: String!, password: String!): UserResponse!
   createTaskColumn(title: String!, index: Int!): TaskColumnResponse!
-  createTask(text: String!, columnId: Int!): TaskResponse!
+  createTask(text: String!, columnId: Int!, index: Int!): TaskResponse!
   updateColumnTitle(title: String!, columnId: Int!): TaskColumnResponse!
   logout: LogoutResponse!
   deleteTask(taskId: String!): DeleteResponse!

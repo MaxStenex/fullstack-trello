@@ -36,7 +36,7 @@ const createTaskColumn = async (
 
 const createTask = async (
   _: any,
-  { text, columnId }: MutationCreateTaskArgs,
+  { text, columnId, index }: MutationCreateTaskArgs,
   context: MyContext
 ): Promise<TaskResponse> => {
   try {
@@ -44,7 +44,7 @@ const createTask = async (
     if (text.length < 1) {
       throw new Error("Text lenght should be greater then 0");
     }
-    const task = await TaskService.createTask(text, columnId);
+    const task = await TaskService.createTask(text, columnId, index);
 
     return { task };
   } catch (error) {

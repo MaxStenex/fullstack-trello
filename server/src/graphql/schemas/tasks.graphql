@@ -4,6 +4,7 @@ type Task {
   id: String!
   text: String!
   createdAt: String!
+  index: Int!
 }
 
 type TaskColumn {

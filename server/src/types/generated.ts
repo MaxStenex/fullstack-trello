@@ -85,6 +85,7 @@ export type MutationCreateTaskColumnArgs = {
 export type MutationCreateTaskArgs = {
   text: Scalars['String'];
   columnId: Scalars['Int'];
+  index: Scalars['Int'];
 };
 
 
@@ -132,6 +133,7 @@ export type Task = {
   id: Scalars['String'];
   text: Scalars['String'];
   createdAt: Scalars['String'];
+  index: Scalars['Int'];
 };
 
 export type LogoutResponse = {
@@ -309,7 +311,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   register?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationRegisterArgs, 'input'>>;
   login?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'email' | 'password'>>;
   createTaskColumn?: Resolver<ResolversTypes['TaskColumnResponse'], ParentType, ContextType, RequireFields<MutationCreateTaskColumnArgs, 'title' | 'index'>>;
-  createTask?: Resolver<ResolversTypes['TaskResponse'], ParentType, ContextType, RequireFields<MutationCreateTaskArgs, 'text' | 'columnId'>>;
+  createTask?: Resolver<ResolversTypes['TaskResponse'], ParentType, ContextType, RequireFields<MutationCreateTaskArgs, 'text' | 'columnId' | 'index'>>;
   updateColumnTitle?: Resolver<ResolversTypes['TaskColumnResponse'], ParentType, ContextType, RequireFields<MutationUpdateColumnTitleArgs, 'title' | 'columnId'>>;
   logout?: Resolver<ResolversTypes['LogoutResponse'], ParentType, ContextType>;
   deleteTask?: Resolver<ResolversTypes['DeleteResponse'], ParentType, ContextType, RequireFields<MutationDeleteTaskArgs, 'taskId'>>;
@@ -333,6 +335,7 @@ export type TaskResolvers<ContextType = any, ParentType extends ResolversParentT
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   text?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  index?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
