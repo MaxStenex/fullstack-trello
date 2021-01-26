@@ -9,12 +9,13 @@ import { CreateTaskResponseType, TaskType } from "../../types/graphql";
 type Props = {
   columnId: number;
   addTask: (newTask: TaskType, columnId: number) => void;
+  newTaskIndex: number;
 };
 
-const AddTaskButton: React.FC<Props> = ({ columnId, addTask }) => {
+const AddTaskButton: React.FC<Props> = ({ columnId, addTask, newTaskIndex }) => {
   const [createTask, { loading }] = useMutation<
     CreateTaskResponseType,
-    { text: string; columnId: number }
+    { text: string; columnId: number; index: number }
   >(CREATE_TASK_MUTATION);
 
   const [isFormOpened, setFormOpened] = useState(false);
@@ -23,7 +24,9 @@ const AddTaskButton: React.FC<Props> = ({ columnId, addTask }) => {
     <Formik
       initialValues={{ cardText: "" }}
       onSubmit={async ({ cardText }, { resetForm }) => {
-        const response = await createTask({ variables: { text: cardText, columnId } });
+        const response = await createTask({
+          variables: { text: cardText, columnId, index: newTaskIndex },
+        });
         if (response.data?.createTask.task) {
           addTask(response.data.createTask.task, columnId);
           resetForm();

@@ -63,7 +63,7 @@ const Main = () => {
     )[0];
     const draggableTask = sourceColumn.tasks.splice(source.index, 1)[0];
 
-    if (source.droppableId === destination?.droppableId) {
+    if (source.droppableId === destination.droppableId) {
       sourceColumn.tasks.splice(destination.index, 0, draggableTask);
 
       return setColumns(
@@ -76,7 +76,7 @@ const Main = () => {
     }
 
     const destinationColumn = newColumns.filter(
-      (column) => column.id.toString() === destination?.droppableId
+      (column) => column.id.toString() === destination.droppableId
     )[0];
     destinationColumn.tasks.splice(destination.index, 0, draggableTask);
 

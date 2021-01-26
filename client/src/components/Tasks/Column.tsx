@@ -124,7 +124,7 @@ const Column: React.FC<PropsType> = ({
               </Tasks>
             )}
           </Droppable>
-          <AddTaskButton columnId={+id} addTask={addTask} />
+          <AddTaskButton newTaskIndex={tasks.length} columnId={+id} addTask={addTask} />
         </Container>
       )}
     </Draggable>

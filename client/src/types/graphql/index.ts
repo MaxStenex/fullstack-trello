@@ -42,6 +42,7 @@ export type MeQueryResponseType = {
 export type TaskType = {
   id: string;
   text: string;
+  index: number;
 };
 
 export type TaskColumnType = {
