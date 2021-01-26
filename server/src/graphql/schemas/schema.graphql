@@ -7,6 +7,7 @@
 # import TaskResponse from './tasks.graphql'
 # import TaskColumnResponse from './tasks.graphql'
 # import DeleteResponse from './tasks.graphql'
+# import ChangeColumnsOrderResponse from './tasks.graphql'
 
 type Query {
   hello: String!
@@ -23,4 +24,8 @@ type Mutation {
   logout: LogoutResponse!
   deleteTask(taskId: String!): DeleteResponse!
   deleteColumn(columnId: Int!): DeleteResponse!
+  changeColumnsOrder(
+    sourceIndex: Int!
+    destinationIndex: Int!
+  ): ChangeColumnsOrderResponse!
 }

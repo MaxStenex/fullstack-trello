@@ -4,6 +4,7 @@ import { User } from "../entities/User";
 import { MyContext } from "../types/MyContext";
 import { isIndexUnique } from "../utils/isIndexUnique";
 import UserService from "./UserService";
+import { Between, getConnection } from "typeorm";
 
 class TaskService {
   createTaskColumn = async (
@@ -75,7 +76,7 @@ class TaskService {
     if (!task) {
       throw new Error("Invalid task id");
     }
-    task.remove();
+    Task.remove(task);
     return false;
   };
 
@@ -87,6 +88,43 @@ class TaskService {
     column.tasks = [];
     await column.save();
     await TaskColumn.delete(columnId);
+
+    return true;
+  };
+
+  changeColumnsOrder = async (
+    sourceIndex: number,
+    destinationIndex: number
+  ): Promise<true> => {
+    const connection = getConnection();
+    const draggedColumn = await TaskColumn.findOne({ where: { index: sourceIndex } });
+
+    const columnsAfterDragged =
+      sourceIndex < destinationIndex
+        ? await connection.getRepository(TaskColumn).find({
+            index: Between(sourceIndex + 1, destinationIndex),
+          })
+        : await connection.getRepository(TaskColumn).find({
+            index: Between(destinationIndex, sourceIndex - 1),
+          });
+
+    if (!draggedColumn || columnsAfterDragged.length === 0) {
+      throw new Error("Something goes wrong");
+    }
+
+    if (sourceIndex < destinationIndex) {
+      // Decrement indexes of all columns, that staying after dragged column
+      for (let i = 0; i < columnsAfterDragged.length; i++) {
+        columnsAfterDragged[i].index = columnsAfterDragged[i].index - 1;
+      }
+    } else {
+      for (let i = 0; i < columnsAfterDragged.length; i++) {
+        columnsAfterDragged[i].index = columnsAfterDragged[i].index + 1;
+      }
+    }
+
+    draggedColumn.index = destinationIndex;
+    TaskColumn.save([draggedColumn, ...columnsAfterDragged]);
 
     return true;
   };

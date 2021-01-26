@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Field, Form, Formik } from "formik";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { LOGIN_MUTATION } from "../../graphql/mutation/login";
 import { LoginMutationResponseType, LoginMutationVarsType } from "../../types/graphql";
@@ -14,6 +14,7 @@ type FormValuesType = {
 
 const Main = () => {
   const authDispatch = useAuhDispatch();
+  const history = useHistory();
 
   const [loginUser, { data, loading }] = useMutation<
     LoginMutationResponseType,
@@ -31,6 +32,7 @@ const Main = () => {
             if (data?.login.user) {
               resetForm();
               authDispatch(setUser(data.login.user));
+              history.push("/tasks");
             }
           }}
         >
@@ -42,12 +44,6 @@ const Main = () => {
                 data.login.errors.map((error: string) => (
                   <ErrorText key={error}>{error}</ErrorText>
                 ))}
-              {data?.login.user && (
-                <SuccessText>
-                  Successfully logged in, to <SuccessLink to="/tasks">Tasks</SuccessLink>
-                  <span> </span>page
-                </SuccessText>
-              )}
             </>
             <Submit isLoading={loading} disabled={loading} type="submit">
               Log In
@@ -140,17 +136,6 @@ const ErrorText = styled.span`
   display: block;
   color: red;
   margin-bottom: 10px;
-`;
-const SuccessText = styled.span`
-  display: block;
-  color: green;
-  margin-bottom: 10px;
-`;
-const SuccessLink = styled(Link)`
-  color: blue;
-  &:hover {
-    text-decoration: underline;
-  }
 `;
 
 export default Main;

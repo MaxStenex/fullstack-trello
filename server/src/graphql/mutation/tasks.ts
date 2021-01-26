@@ -9,6 +9,8 @@ import {
   DeleteResponse,
   MutationDeleteTaskArgs,
   MutationDeleteColumnArgs,
+  ChangeColumnsOrderResponse,
+  MutationChangeColumnsOrderArgs,
 } from "../../types/generated";
 import { MyContext } from "../../types/MyContext";
 
@@ -98,10 +100,28 @@ const deleteColumn = async (
   }
 };
 
+const changeColumnsOrder = async (
+  _: any,
+  { sourceIndex, destinationIndex }: MutationChangeColumnsOrderArgs,
+  context: MyContext
+): Promise<ChangeColumnsOrderResponse> => {
+  try {
+    await AuthService.isAuth(context);
+    await TaskService.changeColumnsOrder(sourceIndex, destinationIndex);
+
+    return {
+      isSuccess: true,
+    };
+  } catch (error) {
+    return { isSuccess: false, errors: [error.message] };
+  }
+};
+
 export default {
   createTaskColumn,
   createTask,
   updateColumnTitle,
   deleteTask,
   deleteColumn,
+  changeColumnsOrder,
 };

@@ -4,14 +4,25 @@ import { useEffect, useState } from "react";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 
 import { Column, AddColumnButton } from "./";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { USER_TASK_COLUMNS_QUERY } from "../../graphql/query/userTaskColumns";
-import { TaskColumnType, TaskType, UserTaskColumnsQueryType } from "../../types/graphql";
+import {
+  TaskColumnType,
+  TaskType,
+  UserTaskColumnsQueryType,
+  ChangeColumnsOrderResponse,
+} from "../../types/graphql";
 import { makeTaskColumnsCopy } from "../../utils/makeTaskColumnsCopy";
+import { CHANGE_COLUMNS_ORDER_MUTATION } from "../../graphql/mutation/changeColumnsOrder";
 
 const Main = () => {
   const [columns, setColumns] = useState<Array<TaskColumnType> | null>(null);
   const { data } = useQuery<UserTaskColumnsQueryType>(USER_TASK_COLUMNS_QUERY);
+  const [changeColumnsOrderMutation] = useMutation<
+    ChangeColumnsOrderResponse,
+    { sourceIndex: number; destinationIndex: number }
+  >(CHANGE_COLUMNS_ORDER_MUTATION);
+
   useEffect(() => {
     if (data?.userTaskColumns.taskColumns) {
       const sortedColumns = [...data.userTaskColumns.taskColumns].sort((a, b) => {
@@ -41,6 +52,9 @@ const Main = () => {
 
       newColumns.splice(destination.index, 0, draggableColumn);
 
+      changeColumnsOrderMutation({
+        variables: { sourceIndex: source.index, destinationIndex: destination.index },
+      });
       return setColumns(newColumns);
     }
 

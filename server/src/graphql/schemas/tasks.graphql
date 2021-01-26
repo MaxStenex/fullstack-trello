@@ -34,3 +34,8 @@ type DeleteResponse {
   isSuccess: Boolean!
   errors: [String!]
 }
+
+type ChangeColumnsOrderResponse {
+  isSuccess: Boolean!
+  errors: [String!]
+}

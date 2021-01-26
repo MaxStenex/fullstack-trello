@@ -99,3 +99,10 @@ export type DeleteTaskResponse = {
     errors: ErrorsType;
   };
 };
+
+export type ChangeColumnsOrderResponse = {
+  changeColumnsOrder: {
+    isSuccess: boolean;
+    errors: ErrorsType;
+  };
+};
