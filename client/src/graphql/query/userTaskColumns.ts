@@ -10,6 +10,7 @@ export const USER_TASK_COLUMNS_QUERY = gql`
         tasks {
           id
           text
+          index
         }
       }
       errors

@@ -40,3 +40,15 @@ type ChangeColumnsOrderResponse {
   isSuccess: Boolean!
   errors: [String!]
 }
+
+input ChangeTasksOrderInput {
+  sourceColumnId: Int!
+  destinationColumnId: Int!
+  sourceTaskIndex: Int!
+  destinationTaskIndex: Int!
+}
+
+type ChangeTasksOrderResponse {
+  isSuccess: Boolean!
+  errors: [String!]
+}

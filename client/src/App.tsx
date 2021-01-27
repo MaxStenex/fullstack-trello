@@ -6,11 +6,12 @@ import { Route, Switch } from "react-router-dom";
 
 import { Login, Signup, Home, Tasks } from "./pages";
 import { PrivateRoute } from "./utils/PrivateRoute";
-import { useAuhDispatch, useAuthState } from "./state/user/UserContext";
 import { useQuery } from "@apollo/client";
 import { ME_QUERY } from "./graphql/query/me";
 import { MeQueryResponseType } from "./types/graphql";
+
 import { setLoaded, setLoading, setUser } from "./state/user/actions";
+import { useAuhDispatch, useAuthState } from "./state/user/UserContext";
 
 const App = () => {
   const { loading: userIsLoading } = useAuthState();

@@ -4,6 +4,7 @@ import { User } from "../entities/User";
 import { MyContext } from "../types/MyContext";
 import { isIndexUnique } from "../utils/isIndexUnique";
 import UserService from "./UserService";
+import { changeEtnitiesIndexes } from "../utils/changeEntitiesIndexes";
 import { Between, getConnection } from "typeorm";
 
 class TaskService {
@@ -99,8 +100,7 @@ class TaskService {
   ): Promise<true> => {
     const connection = getConnection();
     const draggedColumn = await TaskColumn.findOne({ where: { index: sourceIndex } });
-
-    const columnsAfterDragged =
+    const columnsAfterOrBeforeDragged =
       sourceIndex < destinationIndex
         ? await connection.getRepository(TaskColumn).find({
             index: Between(sourceIndex + 1, destinationIndex),
@@ -109,23 +109,64 @@ class TaskService {
             index: Between(destinationIndex, sourceIndex - 1),
           });
 
-    if (!draggedColumn || columnsAfterDragged.length === 0) {
+    if (!draggedColumn || columnsAfterOrBeforeDragged.length === 0) {
       throw new Error("Something goes wrong");
     }
-
-    if (sourceIndex < destinationIndex) {
-      // Decrement indexes of all columns, that staying after dragged column
-      for (let i = 0; i < columnsAfterDragged.length; i++) {
-        columnsAfterDragged[i].index = columnsAfterDragged[i].index - 1;
-      }
-    } else {
-      for (let i = 0; i < columnsAfterDragged.length; i++) {
-        columnsAfterDragged[i].index = columnsAfterDragged[i].index + 1;
-      }
-    }
+    const changedIndexesColumns = changeEtnitiesIndexes(
+      columnsAfterOrBeforeDragged,
+      sourceIndex,
+      destinationIndex
+    );
 
     draggedColumn.index = destinationIndex;
-    TaskColumn.save([draggedColumn, ...columnsAfterDragged]);
+    TaskColumn.save([draggedColumn, ...changedIndexesColumns]);
+
+    return true;
+  };
+
+  changeTaskOrder = async (
+    sourceColumnId: number,
+    destinationColumnId: number,
+    sourceTaskIndex: number,
+    destinationTaskIndex: number
+  ): Promise<true> => {
+    const sourceColumn = await TaskColumn.findOne(sourceColumnId, {
+      relations: ["tasks"],
+    });
+    if (!sourceColumn) {
+      throw new Error("Column not found");
+    }
+    const draggedTask = sourceColumn.tasks.filter(
+      (task) => task.index === sourceTaskIndex
+    )[0];
+
+    if (sourceColumnId === destinationColumnId) {
+      const connection = getConnection();
+
+      const tasksAfterOrBeforeDragged =
+        sourceTaskIndex < destinationTaskIndex
+          ? await connection.getRepository(Task).find({
+              where: {
+                index: Between(sourceTaskIndex + 1, destinationTaskIndex),
+                taskColumn: sourceColumn,
+              },
+            })
+          : await connection.getRepository(Task).find({
+              where: {
+                index: Between(destinationTaskIndex, sourceTaskIndex - 1),
+                taskColumn: sourceColumn,
+              },
+            });
+
+      const changedIndexesTasks = changeEtnitiesIndexes(
+        tasksAfterOrBeforeDragged,
+        sourceTaskIndex,
+        destinationTaskIndex
+      );
+      draggedTask.index = destinationTaskIndex;
+
+      Task.save([draggedTask, ...changedIndexesTasks]);
+    }
 
     return true;
   };

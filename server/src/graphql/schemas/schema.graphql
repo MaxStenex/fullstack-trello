@@ -8,6 +8,8 @@
 # import TaskColumnResponse from './tasks.graphql'
 # import DeleteResponse from './tasks.graphql'
 # import ChangeColumnsOrderResponse from './tasks.graphql'
+# import ChangeTasksOrderResponse from './tasks.graphql'
+# import ChangeTasksOrderInput from './tasks.graphql'
 
 type Query {
   hello: String!
@@ -28,4 +30,5 @@ type Mutation {
     sourceIndex: Int!
     destinationIndex: Int!
   ): ChangeColumnsOrderResponse!
+  changeTasksOrder(input: ChangeTasksOrderInput!): ChangeTasksOrderResponse!
 }

@@ -62,6 +62,7 @@ export type Mutation = {
   deleteTask: DeleteResponse;
   deleteColumn: DeleteResponse;
   changeColumnsOrder: ChangeColumnsOrderResponse;
+  changeTasksOrder: ChangeTasksOrderResponse;
 };
 
 
@@ -110,6 +111,11 @@ export type MutationChangeColumnsOrderArgs = {
   destinationIndex: Scalars['Int'];
 };
 
+
+export type MutationChangeTasksOrderArgs = {
+  input: ChangeTasksOrderInput;
+};
+
 export type RegisterUserInput = {
   fullname: Scalars['String'];
   email: Scalars['String'];
@@ -150,6 +156,19 @@ export type DeleteResponse = {
 
 export type ChangeColumnsOrderResponse = {
   __typename?: 'ChangeColumnsOrderResponse';
+  isSuccess: Scalars['Boolean'];
+  errors?: Maybe<Array<Scalars['String']>>;
+};
+
+export type ChangeTasksOrderInput = {
+  sourceColumnId: Scalars['Int'];
+  destinationColumnId: Scalars['Int'];
+  sourceTaskIndex: Scalars['Int'];
+  destinationTaskIndex: Scalars['Int'];
+};
+
+export type ChangeTasksOrderResponse = {
+  __typename?: 'ChangeTasksOrderResponse';
   isSuccess: Scalars['Boolean'];
   errors?: Maybe<Array<Scalars['String']>>;
 };
@@ -248,6 +267,8 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   DeleteResponse: ResolverTypeWrapper<DeleteResponse>;
   ChangeColumnsOrderResponse: ResolverTypeWrapper<ChangeColumnsOrderResponse>;
+  ChangeTasksOrderInput: ChangeTasksOrderInput;
+  ChangeTasksOrderResponse: ResolverTypeWrapper<ChangeTasksOrderResponse>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -268,6 +289,8 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
   DeleteResponse: DeleteResponse;
   ChangeColumnsOrderResponse: ChangeColumnsOrderResponse;
+  ChangeTasksOrderInput: ChangeTasksOrderInput;
+  ChangeTasksOrderResponse: ChangeTasksOrderResponse;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
@@ -317,6 +340,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteTask?: Resolver<ResolversTypes['DeleteResponse'], ParentType, ContextType, RequireFields<MutationDeleteTaskArgs, 'taskId'>>;
   deleteColumn?: Resolver<ResolversTypes['DeleteResponse'], ParentType, ContextType, RequireFields<MutationDeleteColumnArgs, 'columnId'>>;
   changeColumnsOrder?: Resolver<ResolversTypes['ChangeColumnsOrderResponse'], ParentType, ContextType, RequireFields<MutationChangeColumnsOrderArgs, 'sourceIndex' | 'destinationIndex'>>;
+  changeTasksOrder?: Resolver<ResolversTypes['ChangeTasksOrderResponse'], ParentType, ContextType, RequireFields<MutationChangeTasksOrderArgs, 'input'>>;
 };
 
 export type TaskColumnResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['TaskColumnResponse'] = ResolversParentTypes['TaskColumnResponse']> = {
@@ -357,6 +381,12 @@ export type ChangeColumnsOrderResponseResolvers<ContextType = any, ParentType ex
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ChangeTasksOrderResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['ChangeTasksOrderResponse'] = ResolversParentTypes['ChangeTasksOrderResponse']> = {
+  isSuccess?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  errors?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type Resolvers<ContextType = any> = {
   Query?: QueryResolvers<ContextType>;
   UserResponse?: UserResponseResolvers<ContextType>;
@@ -370,6 +400,7 @@ export type Resolvers<ContextType = any> = {
   LogoutResponse?: LogoutResponseResolvers<ContextType>;
   DeleteResponse?: DeleteResponseResolvers<ContextType>;
   ChangeColumnsOrderResponse?: ChangeColumnsOrderResponseResolvers<ContextType>;
+  ChangeTasksOrderResponse?: ChangeTasksOrderResponseResolvers<ContextType>;
 };
 
 

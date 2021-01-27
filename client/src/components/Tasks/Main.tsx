@@ -25,9 +25,16 @@ const Main = () => {
 
   useEffect(() => {
     if (data?.userTaskColumns.taskColumns) {
-      const sortedColumns = [...data.userTaskColumns.taskColumns].sort((a, b) => {
-        return a.index - b.index;
-      });
+      const sortedColumns = makeTaskColumnsCopy(data.userTaskColumns.taskColumns)
+        .sort((a, b) => {
+          return a.index - b.index;
+        })
+        .map((column) => {
+          column.tasks = [...column.tasks].sort((a, b) => {
+            return a.index - b.index;
+          });
+          return column;
+        });
 
       setColumns(sortedColumns);
     }
