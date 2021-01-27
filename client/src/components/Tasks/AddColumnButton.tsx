@@ -26,6 +26,7 @@ const AddColumnButton: React.FC<Props> = ({ addColumn, newColumnIndex }) => {
           const { data } = await createTaskColumn({
             variables: { title: columnTitle, index: newColumnIndex || 0 },
           });
+
           if (data?.createTaskColumn.taskColumn) {
             resetForm();
             addColumn(data.createTaskColumn.taskColumn);

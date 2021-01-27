@@ -11,9 +11,18 @@ import {
   TaskType,
   UserTaskColumnsQueryType,
   ChangeColumnsOrderResponse,
+  ChangeTasksOrderResponse,
 } from "../../types/graphql";
 import { makeTaskColumnsCopy } from "../../utils/makeTaskColumnsCopy";
 import { CHANGE_COLUMNS_ORDER_MUTATION } from "../../graphql/mutation/changeColumnsOrder";
+import { CHANGE_TASKS_ORDER_MUTATION } from "../../graphql/mutation/changeTasksOrder";
+
+type ChangeTasksOrderInputType = {
+  sourceColumnId: number;
+  destinationColumnId: number;
+  sourceTaskIndex: number;
+  destinationTaskIndex: number;
+};
 
 const Main = () => {
   const [columns, setColumns] = useState<Array<TaskColumnType> | null>(null);
@@ -22,6 +31,10 @@ const Main = () => {
     ChangeColumnsOrderResponse,
     { sourceIndex: number; destinationIndex: number }
   >(CHANGE_COLUMNS_ORDER_MUTATION);
+  const [changeTasksOrderMutation] = useMutation<
+    ChangeTasksOrderResponse,
+    ChangeTasksOrderInputType
+  >(CHANGE_TASKS_ORDER_MUTATION);
 
   useEffect(() => {
     if (data?.userTaskColumns.taskColumns) {
@@ -73,6 +86,15 @@ const Main = () => {
     if (source.droppableId === destination.droppableId) {
       sourceColumn.tasks.splice(destination.index, 0, draggableTask);
 
+      changeTasksOrderMutation({
+        variables: {
+          sourceTaskIndex: source.index,
+          destinationTaskIndex: destination.index,
+          sourceColumnId: +source.droppableId,
+          destinationColumnId: +destination.droppableId,
+        },
+      });
+
       return setColumns(
         (prevColumns) =>
           prevColumns &&
@@ -86,6 +108,15 @@ const Main = () => {
       (column) => column.id.toString() === destination.droppableId
     )[0];
     destinationColumn.tasks.splice(destination.index, 0, draggableTask);
+
+    changeTasksOrderMutation({
+      variables: {
+        sourceTaskIndex: source.index,
+        destinationTaskIndex: destination.index,
+        sourceColumnId: +source.droppableId,
+        destinationColumnId: +destination.droppableId,
+      },
+    });
 
     return setColumns(
       (prevColumns) =>

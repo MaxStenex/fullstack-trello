@@ -11,7 +11,8 @@ export const changeEtnitiesIndexes = (
     for (let i = 0; i < entities.length; i++) {
       entities[i].index = entities[i].index - 1;
     }
-  } else {
+  }
+  if (sourceIndex > destinationIndex) {
     for (let i = 0; i < entities.length; i++) {
       entities[i].index = entities[i].index + 1;
     }

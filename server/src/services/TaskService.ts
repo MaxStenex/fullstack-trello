@@ -6,6 +6,7 @@ import { isIndexUnique } from "../utils/isIndexUnique";
 import UserService from "./UserService";
 import { changeEtnitiesIndexes } from "../utils/changeEntitiesIndexes";
 import { Between, getConnection } from "typeorm";
+import { getAfterOrBeforeDraggedTasks } from "../utils/getAfterOrBeforeDraggedTasks";
 
 class TaskService {
   createTaskColumn = async (
@@ -141,22 +142,11 @@ class TaskService {
     )[0];
 
     if (sourceColumnId === destinationColumnId) {
-      const connection = getConnection();
-
-      const tasksAfterOrBeforeDragged =
-        sourceTaskIndex < destinationTaskIndex
-          ? await connection.getRepository(Task).find({
-              where: {
-                index: Between(sourceTaskIndex + 1, destinationTaskIndex),
-                taskColumn: sourceColumn,
-              },
-            })
-          : await connection.getRepository(Task).find({
-              where: {
-                index: Between(destinationTaskIndex, sourceTaskIndex - 1),
-                taskColumn: sourceColumn,
-              },
-            });
+      const tasksAfterOrBeforeDragged = await getAfterOrBeforeDraggedTasks(
+        sourceTaskIndex,
+        destinationTaskIndex,
+        sourceColumn
+      );
 
       const changedIndexesTasks = changeEtnitiesIndexes(
         tasksAfterOrBeforeDragged,
@@ -166,6 +156,48 @@ class TaskService {
       draggedTask.index = destinationTaskIndex;
 
       Task.save([draggedTask, ...changedIndexesTasks]);
+    } else {
+      const fakeDestinationTaskIndex = sourceColumn.tasks.length - 1;
+
+      const sourceColumnTasksAfterOrBeforeDragged = await getAfterOrBeforeDraggedTasks(
+        sourceTaskIndex,
+        fakeDestinationTaskIndex,
+        sourceColumn
+      );
+      const changedIndexesSourceColumnTasks = changeEtnitiesIndexes(
+        sourceColumnTasksAfterOrBeforeDragged,
+        sourceTaskIndex,
+        fakeDestinationTaskIndex
+      );
+
+      const destinationColumn = await TaskColumn.findOne(destinationColumnId, {
+        relations: ["tasks"],
+      });
+      if (!destinationColumn) {
+        throw new Error("Column not found");
+      }
+
+      const fakeSourceTaskIndex = destinationColumn.tasks.length;
+      const destinationColumnTasksAfterOrBeforeDragged = await getAfterOrBeforeDraggedTasks(
+        fakeSourceTaskIndex,
+        destinationTaskIndex,
+        destinationColumn
+      );
+
+      const changedIndexesDestinationColumnTasks = changeEtnitiesIndexes(
+        destinationColumnTasksAfterOrBeforeDragged,
+        fakeSourceTaskIndex,
+        destinationTaskIndex
+      );
+
+      draggedTask.index = destinationTaskIndex;
+      draggedTask.taskColumn = destinationColumn;
+
+      Task.save([
+        draggedTask,
+        ...changedIndexesSourceColumnTasks,
+        ...changedIndexesDestinationColumnTasks,
+      ]);
     }
 
     return true;

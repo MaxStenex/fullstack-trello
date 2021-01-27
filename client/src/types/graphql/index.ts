@@ -107,3 +107,10 @@ export type ChangeColumnsOrderResponse = {
     errors: ErrorsType;
   };
 };
+
+export type ChangeTasksOrderResponse = {
+  changeTasksOrder: {
+    isSuccess: boolean;
+    errors: ErrorsType;
+  };
+};
