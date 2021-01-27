@@ -92,6 +92,8 @@ class AuthService {
       .getRepository(User)
       .increment({ id: userId }, "tokenVersion", 1);
 
+    context.res.clearCookie("rt");
+    context.res.clearCookie("at");
     return true;
   };
 }

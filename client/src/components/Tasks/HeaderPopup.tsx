@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { useApolloClient, useMutation } from "@apollo/client";
 import React, { useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
@@ -16,6 +16,7 @@ type Props = {
 const HeaderPopup: React.FC<Props> = ({ closePopup }) => {
   const history = useHistory();
   const { user } = useAuthState();
+  const client = useApolloClient();
   const authDispatch = useAuhDispatch();
   const [logout] = useMutation<LogoutResponseType>(LOGOUT_MUTATION);
   const popupRef = useRef<null | HTMLDivElement>(null);
@@ -24,6 +25,7 @@ const HeaderPopup: React.FC<Props> = ({ closePopup }) => {
     const response = await logout();
     if (response.data?.logout.isSuccess === true) {
       authDispatch(logoutUser());
+      client.clearStore();
       history.push("/home");
     }
   };

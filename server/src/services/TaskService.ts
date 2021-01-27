@@ -14,7 +14,7 @@ class TaskService {
     index: number,
     context: MyContext
   ): Promise<TaskColumn> => {
-    const indexUnique = await isIndexUnique(TaskColumn, index);
+    const indexUnique = await isIndexUnique(TaskColumn, index, context.payload!.userId);
     if (!indexUnique) {
       throw new Error("Index is not unique");
     }
@@ -97,17 +97,23 @@ class TaskService {
 
   changeColumnsOrder = async (
     sourceIndex: number,
-    destinationIndex: number
+    destinationIndex: number,
+    userId: number
   ): Promise<true> => {
     const connection = getConnection();
-    const draggedColumn = await TaskColumn.findOne({ where: { index: sourceIndex } });
+    const user = await User.findOne(userId);
+    const draggedColumn = await TaskColumn.findOne({
+      where: { index: sourceIndex, user },
+    });
     const columnsAfterOrBeforeDragged =
       sourceIndex < destinationIndex
         ? await connection.getRepository(TaskColumn).find({
             index: Between(sourceIndex + 1, destinationIndex),
+            user,
           })
         : await connection.getRepository(TaskColumn).find({
             index: Between(destinationIndex, sourceIndex - 1),
+            user,
           });
 
     if (!draggedColumn || columnsAfterOrBeforeDragged.length === 0) {

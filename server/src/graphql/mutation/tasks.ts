@@ -32,6 +32,7 @@ const createTaskColumn = async (
 
     return { taskColumn };
   } catch (error) {
+    console.log(error);
     return { errors: [error.message] };
   }
 };
@@ -109,7 +110,11 @@ const changeColumnsOrder = async (
 ): Promise<ChangeColumnsOrderResponse> => {
   try {
     await AuthService.isAuth(context);
-    await TaskService.changeColumnsOrder(sourceIndex, destinationIndex);
+    await TaskService.changeColumnsOrder(
+      sourceIndex,
+      destinationIndex,
+      context.payload!.userId
+    );
 
     return {
       isSuccess: true,
